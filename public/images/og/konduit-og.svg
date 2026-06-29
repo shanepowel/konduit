@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0A1628"/>
+  <rect x="80" y="200" width="80" height="80" rx="12" fill="#2563EB"/>
+  <path d="M105 225h30v5h-20v50h-5V230h-5v-5z" fill="#fff"/>
+  <text x="180" y="265" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="700" fill="#FFFFFF">Konduit</text>
+  <text x="80" y="360" font-family="Inter, system-ui, sans-serif" font-size="32" fill="#94A3B8">Enterprise technology, reliably supplied.</text>
+</svg>

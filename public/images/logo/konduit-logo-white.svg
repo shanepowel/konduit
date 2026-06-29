@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" role="img" aria-label="Konduit">
+  <rect width="32" height="32" x="0" y="4" rx="6" fill="#2563EB"/>
+  <path d="M10 14h12v2H14v12h-2V16h-4v-2z" fill="#fff"/>
+  <text x="40" y="28" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700" fill="#FFFFFF">Konduit</text>
+</svg>
