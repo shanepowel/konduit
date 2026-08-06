@@ -1,17 +1,20 @@
 /**
- * Link the Medusa storefront into the monorepo root so Vercel can run
+ * Materialize the Medusa storefront at the monorepo root so Vercel can run
  * `next build` when Project Root Directory is still ".".
  *
  * Preferred: set Root Directory to `apps/storefront` (deploy/VERCEL.md).
+ *
+ * Uses copies (not symlinks) so Vercel’s Next.js file tracer resolves
+ * app routes like twitter-image.jpg correctly.
  */
-import { existsSync, rmSync, symlinkSync } from "node:fs"
-import { join, dirname, relative } from "node:path"
+import { cpSync, existsSync, rmSync } from "node:fs"
+import { join, dirname } from "node:path"
 import { fileURLToPath } from "node:url"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 const storefront = join(root, "apps", "storefront")
 
-const links = [
+const entries = [
   "src",
   "public",
   "next.config.js",
@@ -23,7 +26,7 @@ const links = [
   ".env.production",
 ]
 
-for (const name of links) {
+for (const name of entries) {
   const target = join(storefront, name)
   const dest = join(root, name)
   if (!existsSync(target)) {
@@ -31,7 +34,6 @@ for (const name of links) {
     continue
   }
   rmSync(dest, { recursive: true, force: true })
-  const rel = relative(root, target)
-  symlinkSync(rel, dest)
-  console.log(`linked ${name} -> ${rel}`)
+  cpSync(target, dest, { recursive: true })
+  console.log(`copied ${name}`)
 }
