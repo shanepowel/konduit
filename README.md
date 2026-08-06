@@ -18,9 +18,9 @@ vendor/               # Reference clones (gitignored) — re-clone via docs/UPST
 - Node 20+
 - pnpm 10+
 - Postgres (Neon project `konduit` provisioned for this build)
-- Redis optional in local dev; required in production for event bus
+- Redis required in production (Upstash provisioned — **claim within 3 days**; see [deploy/INFRA.md](deploy/INFRA.md))
 - Paynow sandbox Integration ID + Key (checkout cannot go live without these)
-- Meilisearch host + API key (optional until search is enabled)
+- Meilisearch for catalog search (local binary in agent env; production → Cloud/Railway — see [deploy/INFRA.md](deploy/INFRA.md))
 
 ## Setup
 

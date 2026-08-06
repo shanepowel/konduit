@@ -6,7 +6,28 @@ const paynowConfigured =
   Boolean(process.env.PAYNOW_INTEGRATION_ID) &&
   Boolean(process.env.PAYNOW_INTEGRATION_KEY);
 
+const redisUrl = process.env.REDIS_URL || "";
+
 const modules: Record<string, unknown>[] = [];
+
+if (redisUrl) {
+  modules.push(
+    {
+      resolve: "@medusajs/medusa/event-bus-redis",
+      options: {
+        redisUrl,
+      },
+    },
+    {
+      resolve: "@medusajs/medusa/workflow-engine-redis",
+      options: {
+        redis: {
+          redisUrl,
+        },
+      },
+    }
+  );
+}
 
 if (paynowConfigured) {
   modules.push({
@@ -77,7 +98,7 @@ if (process.env.MEILISEARCH_HOST && process.env.MEILISEARCH_API_KEY) {
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    ...(process.env.REDIS_URL ? { redisUrl: process.env.REDIS_URL } : {}),
+    redisUrl: redisUrl || undefined,
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
