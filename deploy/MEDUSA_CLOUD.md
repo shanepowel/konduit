@@ -49,6 +49,7 @@ mcloud variables list
 
 ## Status (2026-08-06)
 
-- Backend **deployed** at https://konduit.medusajs.app (`/health` → OK)
-- Cloud Postgres migrated; regions USD/ZWG, categories, 8 products, publishable key provisioned
-- Storefront first build raced backend key creation (failed); resilient static params + rebuild in progress for https://konduit.medusajs.site
+- Backend **deployed** — https://konduit.medusajs.app (`/health` OK, admin at `/app`)
+- Storefront **deployed** — https://konduit.medusajs.site → `/zw`
+- Catalog live on Cloud Postgres (USD + ZWG regions, categories, 8 OEM products)
+- Publishable key auto-provisioned by Cloud and linked to the Konduit sales channel
