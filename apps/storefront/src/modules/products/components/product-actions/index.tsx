@@ -139,41 +139,12 @@ export default function ProductActions({
   const sourcing = getSourcingType(product.metadata)
   const isQuoteOnly = sourcing === "quote_only"
 
-  const handleQuoteRequest = async () => {
-    const email = window.prompt(
-      "Enter your work email for the quote follow-up:"
-    )
-    if (!email || !email.includes("@")) {
-      return
-    }
-    setIsAdding(true)
-    try {
-      const backend =
-        process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
-      const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
-      const res = await fetch(`${backend}/store/quote-requests`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-publishable-api-key": publishableKey,
-        },
-        body: JSON.stringify({
-          email,
-          product_id: product.id,
-          product_title: product.title,
-          quantity: 1,
-          notes: "Storefront quote request",
-        }),
-      })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        window.alert(data.message || "Quote request failed")
-        return
-      }
-      window.location.href = `/${countryCode}/quote-requested`
-    } finally {
-      setIsAdding(false)
-    }
+  const handleQuoteRequest = () => {
+    const params = new URLSearchParams({
+      product: product.id,
+      title: product.title || "Quote request",
+    })
+    router.push(`/${countryCode}/quote?${params.toString()}`)
   }
 
   return (
@@ -205,7 +176,7 @@ export default function ProductActions({
           <ProductPrice product={product} variant={selectedVariant} />
         )}
 
-        {isQuoteOnly ? (
+        {isQuoteOnly || (selectedVariant && !inStock) ? (
           <Button
             onClick={handleQuoteRequest}
             disabled={!!disabled || isAdding}
@@ -220,7 +191,6 @@ export default function ProductActions({
           <Button
             onClick={handleAddToCart}
             disabled={
-              !inStock ||
               !selectedVariant ||
               !!disabled ||
               isAdding ||
@@ -231,10 +201,8 @@ export default function ProductActions({
             isLoading={isAdding}
             data-testid="add-product-button"
           >
-            {!selectedVariant && !options
+            {!selectedVariant || !isValidVariant
               ? "Select variant"
-              : !inStock || !isValidVariant
-              ? "Out of stock"
               : "Add to cart"}
           </Button>
         )}

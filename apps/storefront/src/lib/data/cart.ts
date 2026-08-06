@@ -12,8 +12,9 @@ import {
   getCartId,
   removeCartId,
   setCartId,
+  setCurrencyCode,
 } from "./cookies"
-import { getRegion } from "./regions"
+import { getRegion, listRegions } from "./regions"
 import { getLocale } from "./locale-actions"
 
 /**
@@ -438,6 +439,42 @@ export async function updateRegion(countryCode: string, currentPath: string) {
     throw new Error(`Region not found for country code: ${countryCode}`)
   }
 
+  if (cartId) {
+    await updateCart({ region_id: region.id })
+    const cartCacheTag = await getCacheTag("carts")
+    revalidateTag(cartCacheTag)
+  }
+
+  const regionCacheTag = await getCacheTag("regions")
+  revalidateTag(regionCacheTag)
+
+  const productsCacheTag = await getCacheTag("products")
+  revalidateTag(productsCacheTag)
+
+  redirect(`/${countryCode}${currentPath}`)
+}
+
+/**
+ * Switch pricing currency (USD / ZWG) without changing the country path.
+ * ZWG region has no country mapping, so currency is stored in a cookie.
+ */
+export async function updateCurrency(
+  currencyCode: string,
+  countryCode: string,
+  currentPath: string
+) {
+  const regions = await listRegions()
+  const region = regions.find(
+    (r) => r.currency_code?.toLowerCase() === currencyCode.toLowerCase()
+  )
+
+  if (!region) {
+    throw new Error(`Region not found for currency: ${currencyCode}`)
+  }
+
+  await setCurrencyCode(currencyCode)
+
+  const cartId = await getCartId()
   if (cartId) {
     await updateCart({ region_id: region.id })
     const cartCacheTag = await getCacheTag("carts")

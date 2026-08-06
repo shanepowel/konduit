@@ -1,157 +1,105 @@
-import { listCategories } from "@lib/data/categories";
-import { listCollections } from "@lib/data/collections";
-import { Text, clx } from "@modules/common/components/ui";
-
-import LocalizedClientLink from "@modules/common/components/localized-client-link";
-import MedusaCTA from "@modules/layout/components/medusa-cta";
+import { BRAND, NAV_LINKS } from "@lib/constants/brand"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export default async function Footer() {
-  const { collections } = await listCollections({
-    fields: "*products",
-  });
-  const productCategories = await listCategories();
-
   return (
-    <footer className="border-t border-ui-border-base w-full">
-      <div className="content-container flex flex-col w-full">
-        <div className="flex flex-col gap-y-6 xsmall:flex-row items-start justify-between py-40">
-          <div>
+    <footer className="w-full border-t border-konduit-line bg-konduit-paper">
+      <div className="content-container flex flex-col py-12">
+        <div className="mb-8 flex flex-col justify-between gap-10 small:flex-row small:items-start">
+          <div className="max-w-xs">
             <LocalizedClientLink
               href="/"
-              className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
+              className="mb-3 flex items-center gap-2 font-display text-[19px] font-semibold text-konduit-ink"
             >
-              Konduit
+              <span
+                aria-hidden
+                className="relative inline-block h-4 w-4 rounded-full border-2 border-konduit-copper"
+              >
+                <span className="absolute left-1/2 top-1/2 h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-konduit-copper" />
+              </span>
+              {BRAND.name}
             </LocalizedClientLink>
+            <p className="text-[13px] leading-relaxed text-konduit-muted">
+              {BRAND.tagline}
+            </p>
           </div>
-          <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
-            {productCategories && productCategories?.length > 0 && (
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus txt-ui-fg-base">
-                  Categories
-                </span>
-                <ul
-                  className="grid grid-cols-1 gap-2"
-                  data-testid="footer-categories"
-                >
-                  {productCategories?.slice(0, 6).map((c) => {
-                    if (c.parent_category) {
-                      return;
-                    }
 
-                    const children =
-                      c.category_children?.map((child) => ({
-                        name: child.name,
-                        handle: child.handle,
-                        id: child.id,
-                      })) || null;
-
-                    return (
-                      <li
-                        className="flex flex-col gap-2 text-ui-fg-subtle txt-small"
-                        key={c.id}
-                      >
-                        <LocalizedClientLink
-                          className={clx(
-                            "hover:text-ui-fg-base",
-                            children && "txt-small-plus"
-                          )}
-                          href={`/categories/${c.handle}`}
-                          data-testid="category-link"
-                        >
-                          {c.name}
-                        </LocalizedClientLink>
-                        {children && (
-                          <ul className="grid grid-cols-1 ml-3 gap-2">
-                            {children &&
-                              children.map((child) => (
-                                <li key={child.id}>
-                                  <LocalizedClientLink
-                                    className="hover:text-ui-fg-base"
-                                    href={`/categories/${child.handle}`}
-                                    data-testid="category-link"
-                                  >
-                                    {child.name}
-                                  </LocalizedClientLink>
-                                </li>
-                              ))}
-                          </ul>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
-            {collections && collections.length > 0 && (
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus txt-ui-fg-base">
-                  Collections
-                </span>
-                <ul
-                  className={clx(
-                    "grid grid-cols-1 gap-2 text-ui-fg-subtle txt-small",
-                    {
-                      "grid-cols-2": (collections?.length || 0) > 3,
-                    }
-                  )}
-                >
-                  {collections?.slice(0, 6).map((c) => (
-                    <li key={c.id}>
+          <div className="flex flex-wrap gap-12 small:gap-14">
+            <div>
+              <h4 className="mb-3 font-mono text-[11px] uppercase tracking-[0.06em] text-konduit-muted">
+                Shop
+              </h4>
+              <ul className="space-y-2.5 text-[13px] text-konduit-ink">
+                {NAV_LINKS.filter((l) => l.href.startsWith("/categories")).map(
+                  (link) => (
+                    <li key={link.href}>
                       <LocalizedClientLink
-                        className="hover:text-ui-fg-base"
-                        href={`/collections/${c.handle}`}
+                        href={link.href}
+                        className="hover:text-konduit-blue-deep"
                       >
-                        {c.title}
+                        {link.label}
                       </LocalizedClientLink>
                     </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <div className="flex flex-col gap-y-2">
-              <span className="txt-small-plus txt-ui-fg-base">Medusa</span>
-              <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
+                  )
+                )}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-3 font-mono text-[11px] uppercase tracking-[0.06em] text-konduit-muted">
+                Business
+              </h4>
+              <ul className="space-y-2.5 text-[13px] text-konduit-ink">
+                <li>
+                  <LocalizedClientLink
+                    href="/quote"
+                    className="hover:text-konduit-blue-deep"
+                  >
+                    Request a quote
+                  </LocalizedClientLink>
+                </li>
+                <li>
+                  <LocalizedClientLink
+                    href="/track"
+                    className="hover:text-konduit-blue-deep"
+                  >
+                    Track an order
+                  </LocalizedClientLink>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-3 font-mono text-[11px] uppercase tracking-[0.06em] text-konduit-muted">
+                Company
+              </h4>
+              <ul className="space-y-2.5 text-[13px] text-konduit-ink">
                 <li>
                   <a
-                    href="https://github.com/medusajs"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
+                    href="mailto:hello@konduit.co.zw"
+                    className="hover:text-konduit-blue-deep"
                   >
-                    GitHub
+                    About Konduit
                   </a>
                 </li>
                 <li>
                   <a
-                    href="https://docs.medusajs.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
+                    href="mailto:hello@konduit.co.zw"
+                    className="hover:text-konduit-blue-deep"
                   >
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://github.com/medusajs/dtc-starter"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
-                  >
-                    Source code
+                    Contact
                   </a>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-        <div className="flex w-full mb-16 justify-between text-ui-fg-muted">
-          <Text className="txt-compact-small">
-            © {new Date().getFullYear()} Konduit. All rights reserved.
-          </Text>
-          <MedusaCTA />
+
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-konduit-line pt-5 text-xs text-konduit-muted">
+          <span>© {new Date().getFullYear()} Konduit Ltd.</span>
+          <span>Delivered on a promise, not a guess.</span>
         </div>
       </div>
     </footer>
-  );
+  )
 }

@@ -40,7 +40,9 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
         return r.countries?.map((c) => ({
           country: c.iso_2 ?? "",
           region: r.id,
-          label: c.display_name ?? "",
+          label: `${c.display_name ?? ""}${
+            r.currency_code ? ` (${r.currency_code.toUpperCase()})` : ""
+          }`,
         }))
       })
       .flat()
