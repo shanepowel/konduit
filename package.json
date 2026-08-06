@@ -6,8 +6,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "pnpm -r dev",
-    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel --filter @dtc/backend --filter @dtc/storefront dev",
+    "build": "pnpm --filter @dtc/storefront build",
+    "build:all": "pnpm -r build",
     "start": "turbo start",
     "lint": "turbo lint",
     "test": "turbo test",
