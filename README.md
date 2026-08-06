@@ -71,7 +71,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:8000
 
 ## Deploy
 
-- Storefront: Vercel — root directory `apps/storefront`
+- Storefront: Vercel — root directory `apps/storefront` (see [deploy/VERCEL.md](deploy/VERCEL.md); required or builds fail with “No Next.js version detected”)
 - Backend + Redis + Meilisearch: Railway/Render — see `deploy/`
 - Postgres: Neon
 

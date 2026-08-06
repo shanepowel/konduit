@@ -48,6 +48,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Staged by scripts/vercel-build-storefront.mjs (root-directory bridge)
+/next.config.js
+/check-env-variables.js
+/public
+
 # macOS system files
 .DS_Store
 .DS_Store?
