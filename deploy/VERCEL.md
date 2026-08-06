@@ -23,7 +23,7 @@ If Root Directory is still `.`, Vercel used to fail with:
 
 > No Next.js version detected…
 
-The repo root now declares matching `next` / `react` versions. `scripts/vercel-link-storefront.mjs` (run from root `installCommand`) symlinks the storefront app/`src`, config, and `public` into the repo root, and root `buildCommand` runs `pnpm exec next build` (not the workspace filter) so `.next` is written at the repo root.
+The repo root now declares matching `next` / `react` versions. `scripts/vercel-link-storefront.mjs` (run from root `installCommand`) copies the storefront `src`, config, and `public` into the repo root, and root `buildCommand` runs `pnpm exec next build` so `.next` is written at the repo root for the Next.js builder.
 
 ## Env vars
 
