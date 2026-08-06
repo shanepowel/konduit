@@ -2,6 +2,29 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+:root {
+  --konduit-ink: #12181b;
+  --konduit-paper: #f1f2ed;
+  --konduit-raised: #ffffff;
+  --konduit-blue: #1b4e8c;
+  --konduit-blue-deep: #123761;
+  --konduit-copper: #c1622b;
+  --konduit-line: #dadcd3;
+  --konduit-muted: #5c645d;
+  --konduit-delivered: #2f7a4f;
+}
+
+html,
+body {
+  background: var(--konduit-paper);
+  color: var(--konduit-ink);
+}
+
+body {
+  font-family: var(--font-ibm-plex-sans), "IBM Plex Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
@@ -51,7 +74,61 @@
 
 @layer components {
   .content-container {
-    @apply max-w-[1440px] w-full mx-auto px-6;
+    @apply max-w-[1180px] w-full mx-auto px-6 small:px-7;
+  }
+
+  .konduit-eyebrow {
+    @apply font-mono text-[12px] uppercase tracking-[0.12em] text-konduit-blue;
+  }
+
+  .konduit-route-line {
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--konduit-copper) 0 8px,
+      transparent 8px 14px
+    );
+  }
+
+  .konduit-fade-up {
+    animation: konduit-fade-up 0.7s ease-out both;
+  }
+
+  .konduit-fade-up-delay-1 {
+    animation-delay: 0.08s;
+  }
+
+  .konduit-fade-up-delay-2 {
+    animation-delay: 0.16s;
+  }
+
+  .konduit-fade-up-delay-3 {
+    animation-delay: 0.24s;
+  }
+
+  .konduit-route-in {
+    animation: konduit-route-in 0.9s ease-out 0.2s both;
+  }
+
+  @keyframes konduit-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes konduit-route-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .contrast-btn {

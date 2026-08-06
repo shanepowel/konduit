@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
 
+import { CATEGORY_INTROS } from "@lib/constants/brand"
 import InteractiveLink from "@modules/common/components/interactive-link"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
 import RefinementList from "@modules/store/components/refinement-list"
@@ -39,9 +40,14 @@ export default function CategoryTemplate({
 
   getParents(category)
 
+  const intro =
+    (category.handle && CATEGORY_INTROS[category.handle]) ||
+    category.description ||
+    null
+
   return (
     <div
-      className="flex flex-col small:flex-row small:items-start py-6 content-container"
+      className="content-container flex flex-col py-10 small:flex-row small:items-start"
       data-testid="category-container"
     >
       <RefinementList
@@ -50,30 +56,36 @@ export default function CategoryTemplate({
         hideOptionsPicker
       />
       <div className="w-full">
-        <div className="flex flex-row mb-8 text-2xl-semi gap-4">
-          {parents &&
-            parents.map((parent) => (
-              <span key={parent.id} className="text-ui-fg-subtle">
-                <LocalizedClientLink
-                  className="mr-4 hover:text-black"
-                  href={`/categories/${parent.handle}`}
-                  data-testid="sort-by-link"
-                >
-                  {parent.name}
-                </LocalizedClientLink>
-                /
-              </span>
-            ))}
-          <h1 data-testid="category-page-title">{category.name}</h1>
+        <div className="mb-4 flex flex-row flex-wrap gap-2 text-sm text-konduit-muted">
+          {parents.map((parent) => (
+            <span key={parent.id} className="flex items-center gap-2">
+              <LocalizedClientLink
+                className="hover:text-konduit-ink"
+                href={`/categories/${parent.handle}`}
+              >
+                {parent.name}
+              </LocalizedClientLink>
+              <span>/</span>
+            </span>
+          ))}
         </div>
-        {category.description && (
-          <div className="mb-8 text-base-regular">
-            <p>{category.description}</p>
-          </div>
+
+        <h1
+          className="font-display text-3xl tracking-tight text-konduit-ink"
+          data-testid="category-page-title"
+        >
+          {category.name}
+        </h1>
+
+        {intro && (
+          <p className="mt-4 mb-8 max-w-3xl text-base leading-relaxed text-konduit-muted">
+            {intro}
+          </p>
         )}
-        {category.category_children && (
-          <div className="mb-8 text-base-large">
-            <ul className="grid grid-cols-1 gap-2">
+
+        {category.category_children && category.category_children.length > 0 && (
+          <div className="mb-8">
+            <ul className="flex flex-wrap gap-3">
               {category.category_children?.map((c) => (
                 <li key={c.id}>
                   <InteractiveLink href={`/categories/${c.handle}`}>
@@ -84,6 +96,7 @@ export default function CategoryTemplate({
             </ul>
           </div>
         )}
+
         <Suspense
           fallback={
             <SkeletonProductGrid

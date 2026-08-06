@@ -130,3 +130,24 @@ export const removeCartId = async () => {
     maxAge: -1,
   })
 }
+
+const CURRENCY_COOKIE = "_medusa_currency_code"
+
+export const getCurrencyCode = async (): Promise<string | null> => {
+  try {
+    const cookies = await nextCookies()
+    return cookies.get(CURRENCY_COOKIE)?.value?.toLowerCase() || null
+  } catch {
+    return null
+  }
+}
+
+export const setCurrencyCode = async (currencyCode: string) => {
+  const cookies = await nextCookies()
+  cookies.set(CURRENCY_COOKIE, currencyCode.toLowerCase(), {
+    maxAge: 60 * 60 * 24 * 365,
+    httpOnly: false,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  })
+}
