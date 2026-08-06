@@ -1,10 +1,11 @@
 import { loadEnv, defineConfig } from "@medusajs/framework/utils";
+import type { PluginOptions as PaynowPluginOptions } from "medusa-payment-paynow";
 
 loadEnv(process.env.NODE_ENV || "development", process.cwd());
 
-const paynowConfigured =
-  Boolean(process.env.PAYNOW_INTEGRATION_ID) &&
-  Boolean(process.env.PAYNOW_INTEGRATION_KEY);
+const paynowIntegrationId = process.env.PAYNOW_INTEGRATION_ID;
+const paynowIntegrationKey = process.env.PAYNOW_INTEGRATION_KEY;
+const paynowConfigured = Boolean(paynowIntegrationId && paynowIntegrationKey);
 
 const redisUrl = process.env.REDIS_URL || "";
 
@@ -29,7 +30,19 @@ if (redisUrl) {
   );
 }
 
-if (paynowConfigured) {
+if (paynowConfigured && paynowIntegrationId && paynowIntegrationKey) {
+  const paynowOptions: PaynowPluginOptions = {
+    integration_id: paynowIntegrationId,
+    integration_key: paynowIntegrationKey,
+    result_url:
+      process.env.PAYNOW_RESULT_URL ||
+      "http://localhost:9000/hooks/payment/paynow_paynow",
+    return_url:
+      process.env.PAYNOW_RETURN_URL ||
+      "http://localhost:8000/api/paynow/return",
+    debug: process.env.PAYNOW_DEBUG === "true",
+  };
+
   modules.push({
     resolve: "@medusajs/medusa/payment",
     options: {
@@ -37,17 +50,7 @@ if (paynowConfigured) {
         {
           resolve: "medusa-payment-paynow",
           id: "paynow",
-          options: {
-            integration_id: process.env.PAYNOW_INTEGRATION_ID,
-            integration_key: process.env.PAYNOW_INTEGRATION_KEY,
-            result_url:
-              process.env.PAYNOW_RESULT_URL ||
-              "http://localhost:9000/hooks/payment/paynow_paynow",
-            return_url:
-              process.env.PAYNOW_RETURN_URL ||
-              "http://localhost:8000/api/paynow/return",
-            debug: process.env.PAYNOW_DEBUG === "true",
-          } satisfies import("medusa-payment-paynow").PluginOptions,
+          options: paynowOptions,
         },
       ],
     },
