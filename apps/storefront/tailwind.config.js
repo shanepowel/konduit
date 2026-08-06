@@ -33,6 +33,17 @@ module.exports = {
           80: "#1F2937",
           90: "#111827",
         },
+        konduit: {
+          ink: "#12181B",
+          paper: "#F1F2ED",
+          raised: "#FFFFFF",
+          blue: "#1B4E8C",
+          "blue-deep": "#123761",
+          copper: "#C1622B",
+          line: "#DADCD3",
+          muted: "#5C645D",
+          delivered: "#2F7A4F",
+        },
       },
       borderRadius: {
         none: "0px",
@@ -59,14 +70,22 @@ module.exports = {
       },
       fontFamily: {
         sans: [
-          "Inter",
-          "-apple-system",
-          "BlinkMacSystemFont",
+          "var(--font-ibm-plex-sans)",
+          "IBM Plex Sans",
           "Segoe UI",
-          "Roboto",
-          "Helvetica Neue",
-          "Ubuntu",
           "sans-serif",
+        ],
+        display: [
+          "var(--font-unbounded)",
+          "Unbounded",
+          "Segoe UI",
+          "sans-serif",
+        ],
+        mono: [
+          "var(--font-ibm-plex-mono)",
+          "IBM Plex Mono",
+          "ui-monospace",
+          "monospace",
         ],
       },
       keyframes: {

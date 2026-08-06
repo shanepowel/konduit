@@ -1,23 +1,20 @@
-import { Heading, Text } from "@modules/common/components/ui"
-
 import InteractiveLink from "@modules/common/components/interactive-link"
 
 const EmptyCartMessage = () => {
   return (
-    <div className="py-48 px-2 flex flex-col justify-center items-start" data-testid="empty-cart-message">
-      <Heading
-        level="h1"
-        className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
-      >
+    <div
+      className="flex flex-col items-start justify-center px-2 py-48"
+      data-testid="empty-cart-message"
+    >
+      <h1 className="font-display text-3xl tracking-tight text-konduit-ink">
         Cart
-      </Heading>
-      <Text className="text-base-regular mt-4 mb-6 max-w-[32rem]">
-        You don&apos;t have anything in your cart. Let&apos;s change that, use
-        the link below to start browsing our products.
-      </Text>
-      <div>
-        <InteractiveLink href="/store">Explore products</InteractiveLink>
-      </div>
+      </h1>
+      <p className="mt-4 mb-6 max-w-[32rem] text-base text-konduit-muted">
+        Nothing in your cart yet. Browse the catalogue to get started.
+      </p>
+      <InteractiveLink href="/categories/infrastructure">
+        Browse the catalogue
+      </InteractiveLink>
     </div>
   )
 }
