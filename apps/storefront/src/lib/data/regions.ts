@@ -2,7 +2,7 @@
 
 import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
-import { getCacheOptions } from "./cookies"
+import { getCacheOptions, getCurrencyCode } from "./cookies"
 
 export const listRegions = async () => {
   const next = {
@@ -33,28 +33,34 @@ export const retrieveRegion = async (id: string) => {
     .then(({ region }) => region)
 }
 
-const regionMap = new Map<string, HttpTypes.StoreRegion>()
-
+/**
+ * Resolve the active commerce region for a country path segment.
+ * Prefer the shopper's currency cookie (USD/ZWG) when that region exists,
+ * since ZWG is seeded without a country mapping in Medusa.
+ */
 export const getRegion = async (countryCode: string) => {
-  if (regionMap.has(countryCode)) {
-    return regionMap.get(countryCode)
-  }
-
   const regions = await listRegions()
 
-  if (!regions) {
+  if (!regions?.length) {
     return null
   }
 
-  regions.forEach((region) => {
-    region.countries?.forEach((c) => {
-      regionMap.set(c?.iso_2 ?? "", region)
-    })
-  })
+  const preferredCurrency = await getCurrencyCode()
+  if (preferredCurrency) {
+    const byCurrency = regions.find(
+      (region) => region.currency_code?.toLowerCase() === preferredCurrency
+    )
+    if (byCurrency) {
+      return byCurrency
+    }
+  }
 
-  const region = countryCode
-    ? regionMap.get(countryCode)
-    : regionMap.get("us")
+  const byCountry = regions.find((region) =>
+    region.countries?.some((c) => c.iso_2 === countryCode)
+  )
+  if (byCountry) {
+    return byCountry
+  }
 
-  return region
+  return regions[0] ?? null
 }
