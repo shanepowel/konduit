@@ -152,3 +152,36 @@ claude mcp add --transport http medusa https://docs.medusajs.com/mcp # or agent 
 - `.env` / `.env.local` — never commit, print, or copy secret values out of them. Edit `.env.template` instead when documenting a new variable.
 - Existing migrations in `src/modules/*/migrations/` — add a new migration rather than rewriting one that may already have run.
 - Don't run destructive DB commands (drops, `db:migrate --help`-style flags that reset state) against the user's database without explicit confirmation.
+
+## Cursor Cloud specific instructions
+
+Package manager is `pnpm` (see root `packageManager`). The startup update script only runs `pnpm install`; everything below (starting Postgres, migrating/seeding, creating envs) is a one-time setup already baked into the VM snapshot, so on a fresh session you usually only need to (re)start services.
+
+### Services & how to run them (dev)
+
+| Service | Command (from repo root) | URL | Notes |
+|---------|--------------------------|-----|-------|
+| PostgreSQL 16 | `sudo pg_ctlcluster 16 main start` | `127.0.0.1:5432` | Required. Local cluster; DB `konduit`, role `postgres`/`postgres`. Not auto-started on boot — start it first each session. |
+| Backend (Medusa API + Admin) | `pnpm run backend:dev` | API `http://localhost:9000`, Admin `http://localhost:9000/app` | Needs Postgres up. |
+| Storefront (Next.js) | `pnpm run storefront:dev` | `http://localhost:8000` (region-routed, e.g. `/zw`) | Needs backend up + a valid publishable key in `.env.local`. |
+
+Standard build/lint/test commands live in the "Commands" section above and in each app's `package.json`.
+
+### Env files (gitignored — recreate if missing)
+
+- `apps/backend/.env` — copy `apps/backend/.env.template`, then set `DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5432/konduit` and non-empty `JWT_SECRET`/`COOKIE_SECRET`. Leave `REDIS_URL`, `MEILISEARCH_*`, and `PAYNOW_*` empty for local dev.
+- `apps/storefront/.env.local` — copy `apps/storefront/.env.template` and set `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` (the storefront exits on boot without it).
+
+### Optional modules are off by default in dev
+
+`medusa-config.ts` conditionally enables modules by env var: Redis (`REDIS_URL`), Paynow payment (`PAYNOW_INTEGRATION_ID/KEY`), and Meilisearch (`MEILISEARCH_HOST/API_KEY`). With them empty, Medusa falls back to a Local Event Bus + in-memory locking/workflow engine — the `Local Event Bus ... not recommended for production` and `redisUrl not found` log lines are expected, not errors. Checkout still works via the `pp_system_default` payment provider.
+
+### Seeding & the publishable key
+
+Seeding runs as a data migration (`src/migration-scripts/initial-data-seed.ts`) executed by `pnpm exec medusa db:migrate` — there is no separate `seed` script in `apps/backend`, so `db:migrate` on a fresh DB both migrates and seeds (8 products, USD/ZWG regions, `zw` country). The seed logs the publishable key; you can also read it later in Admin under Settings → Publishable API Keys, or via SQL: `psql -d konduit -c "select token from api_key where type='publishable';"`. Put that value in `apps/storefront/.env.local`. Admin login for this snapshot: `admin@konduit.co.zw` / `supersecret`.
+
+### Known pre-existing issues (not environment problems)
+
+- `apps/backend` production build (`medusa build`) fails typecheck in `medusa-config.ts` (`process.env.PAYNOW_INTEGRATION_ID/KEY` is `string | undefined` but the Paynow provider config types them as `string`). Dev (`medusa develop`) transpiles via swc and is unaffected.
+- `apps/storefront` `next lint`/`next build` report pre-existing ESLint errors (unused vars, `any`, `@ts-ignore`) in `src/lib/data/cart.ts` and a couple of components. `next dev` runs fine.
+- There are currently no backend test spec files, so the `test:*` scripts find no tests.
