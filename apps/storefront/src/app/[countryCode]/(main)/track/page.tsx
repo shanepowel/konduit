@@ -14,7 +14,7 @@ import VerticalTrack from "@modules/order/components/vertical-track"
 
 export const metadata: Metadata = {
   title: "Track your order",
-  description: "Follow your Konduit order from sourced to Harare.",
+  description: "Follow your Konduit order from sourced to delivered.",
 }
 
 type Props = {
@@ -109,15 +109,21 @@ export default async function TrackOrderPage(props: Props) {
   }
 
   return (
-    <div className="bg-konduit-paper">
-      <section className="border-b border-konduit-line py-12 small:py-14">
+    <div>
+      <section
+        className="border-b py-12 small:py-14"
+        style={{ borderColor: "var(--color-divider)" }}
+      >
         <div className="content-container">
-          <p className="konduit-eyebrow">
+          <span className="tag tag-outline mb-3">
             {trackProps ? `Order #${display.refLabel}` : "Order tracking"}
+          </span>
+          <h1 className="mt-2 text-[clamp(28px,4vw,40px)]">Track your order</h1>
+          <p className="mt-3 max-w-[48ch] text-[15px] opacity-75">
+            Follow freight from supplier confirmation through customs to your
+            branch or site. Delivery windows vary by origin, up to{" "}
+            {BRAND.defaultDeliveryDays} days.
           </p>
-          <h1 className="mt-3.5 font-display text-[34px] tracking-tight text-konduit-ink">
-            Track your order
-          </h1>
         </div>
       </section>
 
@@ -126,7 +132,10 @@ export default async function TrackOrderPage(props: Props) {
           <TrackLookup countryCode={countryCode} initialError={lookupError} />
 
           {!trackProps ? (
-            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.08em] text-konduit-copper">
+            <p
+              className="mb-4 text-[12px] uppercase tracking-[0.06em]"
+              style={{ color: "var(--color-accent-700)" }}
+            >
               Example tracking · not a live order
             </p>
           ) : null}
@@ -140,18 +149,15 @@ export default async function TrackOrderPage(props: Props) {
             steps={display.steps}
           />
 
-          <div className="mt-6 flex flex-wrap gap-4 text-[13px]">
+          <div className="mt-8 flex flex-wrap gap-3">
             <LocalizedClientLink
               href="/account/orders"
-              className="font-semibold text-konduit-blue-deep hover:underline"
+              className="btn btn-secondary"
             >
-              View orders in your account →
+              View orders in your account
             </LocalizedClientLink>
-            <LocalizedClientLink
-              href="/quote"
-              className="font-semibold text-konduit-blue-deep hover:underline"
-            >
-              Request a business quote →
+            <LocalizedClientLink href="/quote" className="btn btn-primary">
+              Request a business quote
             </LocalizedClientLink>
           </div>
         </div>

@@ -1,125 +1,195 @@
+/**
+ * Konduit storefront copy — Organic design direction.
+ * No em dashes. Delivery promise: Option B (variable by product, up to 30 days).
+ */
+
 export const BRAND = {
   name: "Konduit",
   tagline:
-    "Technology supply, telecoms infrastructure, and imported goods for Zimbabwe — delivered on a promise, not a guess.",
-  eyebrow: "Sourced globally · routed to Zimbabwe",
-  headline: "Order it. It arrives in 30 days.",
-  headlineAccent: "30 days",
+    "Technology supply, telecoms infrastructure and specified imports for Zimbabwe and Southern Africa. Delivered on a promise, not a guess.",
+  eyebrow:
+    "UK · USA · China suppliers, cleared into Zimbabwe and Southern Africa",
+  headline: "Secure the technology your business runs on.",
   subhead:
-    "Servers and networking gear. Telecoms infrastructure and devices. Imported goods you can't source locally. One account, one delivery promise, tracked door to door.",
-  primaryCta: "Browse the catalogue",
-  secondaryCta: "Request a business quote",
+    "Servers, telecoms build-out and specified imports, placed through vetted supplier networks across the UK, USA and China and cleared into Southern Africa under one account. Every request is priced against real supplier quotes, real compliance paperwork, and a delivery date we hold ourselves to. Prices shown are indicative. Every order is confirmed by quote.",
+  primaryCta: "Request a business quote",
+  secondaryCta: "Browse the catalogue",
   defaultDeliveryDays: 30,
-  whatsappNote:
-    "Questions about this order? Message us on WhatsApp — we can see this same tracking on our end.",
+  deliveryPromiseLabel: "Up to 30 days",
+  deliveryPromiseBody:
+    "Target window by origin and freight route, quote to doorstep",
 } as const
 
 export const NAV_LINKS = [
   { label: "Infrastructure", href: "/categories/infrastructure" },
   { label: "Telecoms", href: "/categories/telecoms" },
   { label: "Imports", href: "/categories/imports" },
-  { label: "Track an order", href: "/track" },
+  { label: "Branches", href: "/about#branches" },
 ] as const
 
 export const WAYS_TO_BUY = [
   {
     node: "Infrastructure",
     title: "Servers & networking",
-    body: "Rack servers, switches, structured cabling and end-user devices from authorised OEMs. Warranty and compliance docs included. Volume orders route through a quote.",
+    body: "Rack servers, switches and structured cabling placed with authorised OEM suppliers across the UK, USA and China: Dell, HPE, Cisco. Every unit ships with warranty and compliance documentation. Volume orders route to a procurement engineer who specs against your rack, power and rollout plan.",
     href: "/categories/infrastructure",
     cta: "View infrastructure",
   },
   {
     node: "Telecoms",
     title: "Build-out & devices",
-    body: "Network installs, maintenance contracts and site surveys, alongside routers, radios and business mobile devices ready to ship.",
+    body: "Site surveys, network installs and maintenance contracts for operators and enterprises, alongside routers, radios and business mobile devices sourced through our UK, USA and China supplier network and ready to quote without a survey.",
     href: "/categories/telecoms",
     cta: "View telecoms",
   },
   {
     node: "Imports",
     title: "Marketplace goods",
-    body: "Curated imported products not readily available locally — priced, in stock, and covered by the same 30-day delivery promise.",
+    body: "Specified goods not readily available locally. Sourced through external supplier partners in the UK, USA and China, priced landed in US dollars, and cleared through the same customs desk that handles our infrastructure shipments.",
     href: "/categories/imports",
     cta: "View marketplace",
   },
 ] as const
 
-/** Longer intros for category pages — keyed by category handle. */
 export const CATEGORY_INTROS: Record<string, string> = {
   infrastructure:
-    "Servers, networking equipment, structured cabling, and end-user devices sourced from authorised OEM channels. Every order ships with full warranty and compliance documentation. Volume orders route through a quote request — smaller in-stock items can be bought directly.",
+    "Servers, networking equipment, structured cabling, and end-user devices sourced from authorised OEM channels in the UK, USA and China. Every order ships with full warranty and compliance documentation. Volume orders route through a quote request. Smaller catalogue items can be quoted directly.",
   telecoms:
-    "Network installation, maintenance contracts, site surveys, and business devices for teams building out connectivity. Browse services and hardware below — volume and site work routes through a quote; standard devices can be bought directly.",
+    "Network installation, maintenance contracts, site surveys, and business devices for teams building out connectivity. Volume and site work routes through a quote. Standard devices can be quoted from the catalogue.",
   "telecoms-infrastructure-services":
-    "Network installation, maintenance contracts, and site surveys for businesses building out connectivity. Every engagement starts with a quote based on the site and scope — reach out with your requirements and we'll come back with a proposal and timeline.",
+    "Network installation, maintenance contracts, and site surveys for businesses building out connectivity. Every engagement starts with a quote based on the site and scope.",
   "telecoms-devices":
-    "Routers, radios, VSAT equipment, and business mobile devices, in stock and ready to ship. Buy directly — no quote needed for standard orders.",
+    "Routers, radios, VSAT equipment, and business mobile devices sourced through our supplier network. Request a quote for standard orders. No survey required for catalogue devices.",
   imports:
-    "Curated goods sourced internationally and landed in Zimbabwe on a 30-day delivery window. What's listed is what's available — no backorders dressed up as stock.",
+    "Curated goods sourced internationally and landed in Zimbabwe. Delivery windows vary by origin, up to 30 days. What's listed is what's available. No backorders dressed up as stock.",
 }
 
-/**
- * Payment methods stay out until Paynow is live.
- * When ready, insert: { title: "EcoCash · OneMoney · Card", body: "Pay the way that suits the order" }
- */
-export const TRUST_ITEMS = [
+export const TRUST_STATS = [
   {
-    title: "30 days",
-    body: "Target delivery window, order to doorstep",
+    title: "Up to 30 days",
+    body: "Target delivery by origin and freight route, quote to doorstep",
   },
   {
-    title: "USD · ZWG",
-    body: "Priced and payable in either currency",
+    title: "USD priced",
+    body: "Quoted in US dollars, our preferred settlement currency, with ZWG available on request",
   },
   {
-    title: "Zim-based support",
-    body: "Local numbers, local hours, real tracking",
+    title: "5 markets",
+    body: "Customs handled in-house across Zimbabwe and four neighbouring markets",
   },
 ] as const
 
-/** Baseline route waypoints for a 30-day window (scaled at render time). */
-export const ROUTE_BASELINE = {
-  days: 30,
-  nodes: [
-    { place: "Sourced", startDay: 1, endDay: 1 },
-    { place: "In transit", startDay: 2, endDay: 18 },
-    { place: "Customs", startDay: 19, endDay: 25 },
-    { place: "Harare", startDay: 30, endDay: 30 },
-  ],
-} as const
+/** Homepage timeline: upper-bound schedule for the published promise. */
+export const DELIVERY_TIMELINE = [
+  {
+    day: "Day 1",
+    title: "Sourced",
+    body: "Order confirmed against OEM stock or import lot. PO issued to origin.",
+    accent: "terracotta" as const,
+  },
+  {
+    day: "Day 2 to 20",
+    title: "In transit",
+    body: "Freighted to the sub-region. Tracked at each leg, visible on your account.",
+    accent: "terracotta" as const,
+  },
+  {
+    day: "Day 21 to 27",
+    title: "Customs",
+    body: "Cleared in-house: duties, permits and compliance paperwork handled for you.",
+    accent: "terracotta" as const,
+  },
+  {
+    day: "Day 30",
+    title: "Delivered",
+    body: "Door-to-door to Harare, Bulawayo, Lusaka, Gaborone or your listed site.",
+    accent: "sage" as const,
+  },
+] as const
 
 export const LOGISTICS_STAGES = [
   {
-    key: "sourced",
+    key: "sourced" as const,
     stage: "Sourced",
     desc: "Confirmed with supplier and dispatched",
   },
   {
-    key: "in_transit",
+    key: "in_transit" as const,
     stage: "In transit",
     desc: "Left origin warehouse, en route to Zimbabwe",
   },
   {
-    key: "customs",
+    key: "customs" as const,
     stage: "Customs",
-    desc: "Clearing at Beitbridge — usually 2–3 days",
+    desc: "Clearing at Beitbridge, usually 2 to 3 days",
   },
   {
-    key: "delivered",
-    stage: "Delivered — Harare",
+    key: "delivered" as const,
+    stage: "Delivered",
     desc: "Final delivery to your address",
   },
 ] as const
 
 export type LogisticsStatus = (typeof LOGISTICS_STAGES)[number]["key"]
 
-export const QUOTE_CATEGORIES = [
-  "Infrastructure — servers & networking",
-  "Telecoms — infrastructure services",
-  "Telecoms — devices",
-  "Imports — marketplace goods",
-  "Other / mixed",
+/**
+ * Physical presence. Addresses marked provisional pending ops confirmation.
+ * Zimbabwe Msasa example matches the quote form placeholder in the design.
+ */
+export const BRANCHES = [
+  {
+    country: "Zimbabwe",
+    city: "Harare",
+    area: "Msasa",
+    address: "Msasa industrial area (provisional)",
+    tag: "Home market · all lines",
+    tagVariant: "accent" as const,
+    lines: "Infrastructure, Telecoms, Imports",
+  },
+  {
+    country: "Zambia",
+    city: "Lusaka",
+    area: "Delivery hub",
+    address: "Coverage via regional freight (provisional)",
+    tag: "Infrastructure · Telecoms",
+    tagVariant: "sage" as const,
+    lines: "Infrastructure, Telecoms",
+  },
+  {
+    country: "Botswana",
+    city: "Gaborone",
+    area: "Delivery hub",
+    address: "Coverage via regional freight (provisional)",
+    tag: "Infrastructure · Telecoms",
+    tagVariant: "sage" as const,
+    lines: "Infrastructure, Telecoms",
+  },
+  {
+    country: "Mozambique",
+    city: "Maputo",
+    area: "Quote on request",
+    address: "Imports and project freight on request",
+    tag: "Imports · Quote on request",
+    tagVariant: "neutral" as const,
+    lines: "Imports",
+  },
+  {
+    country: "South Africa",
+    city: "Johannesburg",
+    area: "Quote on request",
+    address: "Imports and project freight on request",
+    tag: "Imports · Quote on request",
+    tagVariant: "neutral" as const,
+    lines: "Imports",
+  },
+] as const
+
+export const QUOTE_COUNTRIES = [
+  { value: "zw", label: "Zimbabwe" },
+  { value: "zm", label: "Zambia" },
+  { value: "bw", label: "Botswana" },
+  { value: "mz", label: "Mozambique" },
+  { value: "za", label: "South Africa" },
 ] as const
 
 export const EMPTY_STATES = {
@@ -128,11 +198,10 @@ export const EMPTY_STATES = {
     "Not currently in stock. Request a quote and we'll confirm availability.",
   quoteSubmitted:
     "Quote request sent. We'll come back to you within one business day with pricing and a delivery date.",
-  orderPlaced:
-    "Order confirmed — reference {ref}. Track its route from Track an order.",
-  paymentFailed:
-    "Payment didn't go through. No charge was made — try again or choose a different payment method.",
   noOrders:
     "You don't have any orders yet. Browse the catalogue to place your first one.",
   notFound: "The page you tried to open doesn't exist.",
 } as const
+
+/** Optional n8n / Twenty CRM webhook. Falls back to Medusa quote-requests. */
+export const QUOTE_WEBHOOK_ENV = "NEXT_PUBLIC_QUOTE_WEBHOOK_URL"

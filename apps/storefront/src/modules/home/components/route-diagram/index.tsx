@@ -1,42 +1,34 @@
-import { BRAND } from "@lib/constants/brand"
-import { buildRouteNodes } from "@lib/util/route-nodes"
-import { clx } from "@modules/common/components/ui"
+import { DELIVERY_TIMELINE } from "@lib/constants/brand"
 
-type RouteDiagramProps = {
-  deliveryDays?: number | null
-  className?: string
-}
-
-const RouteDiagram = ({ deliveryDays, className }: RouteDiagramProps) => {
-  const nodes = buildRouteNodes(deliveryDays ?? BRAND.defaultDeliveryDays)
-
+const RouteDiagram = () => {
   return (
-    <div className={clx("relative pt-8 pb-2 konduit-route-in", className)}>
-      <div
-        aria-hidden
-        className="absolute top-[calc(0.5rem+6px)] left-3 right-3 h-[2px] konduit-route-line"
-      />
-      <ol className="relative flex justify-between gap-2">
-        {nodes.map((node) => (
-          <li key={node.place} className="bg-konduit-paper px-2 text-center">
-            <span
-              className={clx(
-                "mx-auto mb-2 block h-3 w-3 rounded-full border-[3px] border-konduit-paper",
-                node.pending
-                  ? "border-2 border-konduit-line bg-konduit-raised"
-                  : "bg-konduit-copper"
-              )}
-            />
-            <div className="font-mono text-[11px] font-medium uppercase tracking-wide text-konduit-ink">
-              {node.place}
-            </div>
-            <div className="mt-0.5 text-[11px] text-konduit-muted">
-              {node.day}
-            </div>
-          </li>
+    <section className="py-14">
+      <span className="tag tag-accent mb-3.5">How an order moves</span>
+      <h2 className="mb-7 max-w-[26ch] text-[28px]">
+        Sourced, shipped and cleared on a schedule we publish before you order.
+      </h2>
+      <div className="grid grid-cols-1 gap-4 small:grid-cols-4">
+        {DELIVERY_TIMELINE.map((step) => (
+          <div
+            key={step.title}
+            className="pl-4"
+            style={{
+              borderLeft: `3px solid ${
+                step.accent === "sage"
+                  ? "var(--color-accent-2)"
+                  : "var(--color-accent)"
+              }`,
+            }}
+          >
+            <p className="mb-1.5 text-xs uppercase tracking-[0.06em] opacity-60">
+              {step.day}
+            </p>
+            <p className="mb-1.5 font-heading text-[19px]">{step.title}</p>
+            <p className="m-0 text-[13.5px] opacity-80">{step.body}</p>
+          </div>
         ))}
-      </ol>
-    </div>
+      </div>
+    </section>
   )
 }
 

@@ -3,42 +3,34 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 
 const WaysToBuy = () => {
   return (
-    <section className="border-t border-konduit-line bg-konduit-paper py-16 small:py-20">
-      <div className="content-container">
-        <div className="mb-9 flex flex-wrap items-end justify-between gap-5">
-          <h2 className="font-display text-[26px] tracking-tight text-konduit-ink">
-            Three ways to buy
-          </h2>
-          <p className="max-w-sm text-sm text-konduit-muted">
-            Business supply, telecoms build-out, and imported goods — under one
-            delivery promise.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 gap-px border border-konduit-line bg-konduit-line small:grid-cols-3">
-          {WAYS_TO_BUY.map((card) => (
-            <article
-              key={card.node}
-              className="bg-konduit-paper p-8 transition-colors hover:bg-konduit-raised"
+    <section className="pb-4 pt-14">
+      <span className="tag tag-outline mb-3.5">Three procurement paths</span>
+      <h2 className="mb-3 max-w-[24ch] text-[30px]">
+        Each journey is built for a different buyer.
+      </h2>
+      <p className="mb-8 max-w-[64ch] text-[15.5px] opacity-80">
+        Infrastructure, telecoms and imports move through the same delivery
+        promise, but the specification, the compliance work and the people who
+        quote them are different.
+      </p>
+      <div className="grid grid-cols-1 gap-5 small:grid-cols-3">
+        {WAYS_TO_BUY.map((card) => (
+          <article
+            key={card.node}
+            id={card.node.toLowerCase()}
+            className="card elev-sm gap-3 p-6"
+          >
+            <span className="card-kicker">{card.node}</span>
+            <h3 className="card-title text-[20px]">{card.title}</h3>
+            <p className="card-body text-sm opacity-85">{card.body}</p>
+            <LocalizedClientLink
+              href={card.href}
+              className="btn btn-ghost self-start !pl-0"
             >
-              <div className="mb-4 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.08em] text-konduit-copper">
-                <span className="h-2 w-2 rounded-full bg-konduit-copper" />
-                {card.node}
-              </div>
-              <h3 className="font-display text-xl font-semibold tracking-tight text-konduit-ink">
-                {card.title}
-              </h3>
-              <p className="mt-3 mb-5 text-sm leading-relaxed text-konduit-muted">
-                {card.body}
-              </p>
-              <LocalizedClientLink
-                href={card.href}
-                className="text-[13px] font-semibold text-konduit-blue-deep hover:text-konduit-blue"
-              >
-                {card.cta} →
-              </LocalizedClientLink>
-            </article>
-          ))}
-        </div>
+              {card.cta} →
+            </LocalizedClientLink>
+          </article>
+        ))}
       </div>
     </section>
   )

@@ -76,14 +76,14 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
 
         {sourcing === "quote_only" && (
           <Text className="text-medium text-konduit-muted">
-            This item is quote-only. Request pricing — we will confirm
+            This item is quote-only. Request pricing and we will confirm
             availability, price, and a delivery date.
           </Text>
         )}
 
         {sourcing === "pre_order" && (
           <Text className="text-medium text-konduit-muted">
-            Pre-order — sourced within the delivery window above.
+            Pre-order: sourced within the delivery window above.
           </Text>
         )}
       </div>

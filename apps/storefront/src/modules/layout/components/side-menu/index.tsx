@@ -38,7 +38,7 @@ const SideMenu = ({
               <div className="relative flex h-full">
                 <Popover.Button
                   data-testid="nav-menu-button"
-                  className="relative h-full flex items-center transition-all ease-out duration-200 focus:outline-none hover:text-konduit-ink"
+                  className="relative flex h-full items-center transition-all duration-200 ease-out focus:outline-none hover:text-[var(--color-accent)]"
                 >
                   Menu
                 </Popover.Button>
@@ -46,7 +46,7 @@ const SideMenu = ({
 
               {open && (
                 <div
-                  className="fixed inset-0 z-[50] bg-black/0 pointer-events-auto"
+                  className="pointer-events-auto fixed inset-0 z-[50] bg-black/0"
                   onClick={close}
                   data-testid="side-menu-backdrop"
                 />
@@ -62,22 +62,22 @@ const SideMenu = ({
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <PopoverPanel className="flex flex-col absolute w-full pr-4 sm:pr-0 sm:w-1/3 2xl:w-1/4 sm:min-w-min h-[calc(100vh-1rem)] z-[51] inset-x-0 text-sm m-2">
+                <PopoverPanel className="absolute inset-x-0 z-[51] m-2 flex h-[calc(100vh-1rem)] w-full flex-col pr-4 text-sm sm:w-1/3 sm:min-w-min sm:pr-0 2xl:w-1/4">
                   <div
                     data-testid="nav-menu-popup"
-                    className="flex flex-col h-full justify-between rounded-soft border border-konduit-line bg-konduit-paper p-6 text-konduit-ink shadow-sm"
+                    className="card elev-md flex h-full flex-col justify-between p-6"
                   >
                     <div className="flex justify-end" id="xmark">
                       <button data-testid="close-menu-button" onClick={close}>
                         <XMark />
                       </button>
                     </div>
-                    <ul className="flex flex-col gap-5 items-start justify-start">
+                    <ul className="flex flex-col items-start justify-start gap-5">
                       {NAV_LINKS.map((link) => (
                         <li key={link.href}>
                           <LocalizedClientLink
                             href={link.href}
-                            className="font-display text-2xl leading-10 hover:text-konduit-blue"
+                            className="font-heading text-2xl leading-10 no-underline hover:text-[var(--color-accent)]"
                             onClick={close}
                           >
                             {link.label}
@@ -87,7 +87,7 @@ const SideMenu = ({
                       <li>
                         <LocalizedClientLink
                           href="/account"
-                          className="font-display text-2xl leading-10 hover:text-konduit-blue"
+                          className="font-heading text-2xl leading-10 no-underline hover:text-[var(--color-accent)]"
                           onClick={close}
                         >
                           Sign in
@@ -96,7 +96,7 @@ const SideMenu = ({
                       <li>
                         <LocalizedClientLink
                           href="/quote"
-                          className="font-display text-2xl leading-10 hover:text-konduit-blue"
+                          className="font-heading text-2xl leading-10 no-underline hover:text-[var(--color-accent)]"
                           onClick={close}
                         >
                           Request a quote

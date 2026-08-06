@@ -106,13 +106,13 @@ export function buildDemoTrackSteps(): {
       {
         key: "customs",
         stage: "Customs",
-        desc: "Clearing at Beitbridge — usually 2–3 days",
+        desc: "Clearing at Beitbridge, usually 2 to 3 days",
         state: "current",
         dateLabel: "24 Aug 2026",
       },
       {
         key: "delivered",
-        stage: "Delivered — Harare",
+        stage: "Delivered: Harare",
         desc: "Final delivery to your address",
         state: "pending",
         dateLabel: "Expected 5 Sep 2026",

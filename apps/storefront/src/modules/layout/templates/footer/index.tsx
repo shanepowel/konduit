@@ -3,102 +3,77 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 
 export default async function Footer() {
   return (
-    <footer className="w-full border-t border-konduit-line bg-konduit-paper">
-      <div className="content-container flex flex-col py-12">
-        <div className="mb-8 flex flex-col justify-between gap-10 small:flex-row small:items-start">
-          <div className="max-w-xs">
+    <footer
+      className="border-t py-12"
+      style={{ borderColor: "var(--color-divider)" }}
+    >
+      <div className="content-container grid grid-cols-1 gap-8 small:grid-cols-[2fr_1fr_1fr_1fr]">
+        <div>
+          <span className="nav-brand mb-2.5 block">{BRAND.name}</span>
+          <p className="m-0 max-w-[32ch] text-[13.5px] opacity-75">
+            {BRAND.tagline}
+          </p>
+        </div>
+        <div>
+          <p className="mb-2.5 text-[11px] uppercase tracking-[0.08em] opacity-60">
+            Shop
+          </p>
+          <div className="flex flex-col gap-2 text-[13.5px]">
+            {NAV_LINKS.filter((l) => l.href.startsWith("/categories")).map(
+              (link) => (
+                <LocalizedClientLink
+                  key={link.href}
+                  href={link.href}
+                  className="text-[var(--color-text)] no-underline hover:text-[var(--color-accent)]"
+                >
+                  {link.label}
+                </LocalizedClientLink>
+              )
+            )}
+          </div>
+        </div>
+        <div>
+          <p className="mb-2.5 text-[11px] uppercase tracking-[0.08em] opacity-60">
+            Business
+          </p>
+          <div className="flex flex-col gap-2 text-[13.5px]">
             <LocalizedClientLink
-              href="/"
-              className="mb-3 flex items-center gap-2 font-display text-[19px] font-semibold text-konduit-ink"
+              href="/quote"
+              className="text-[var(--color-text)] no-underline hover:text-[var(--color-accent)]"
             >
-              <span
-                aria-hidden
-                className="relative inline-block h-4 w-4 rounded-full border-2 border-konduit-copper"
-              >
-                <span className="absolute left-1/2 top-1/2 h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-konduit-copper" />
-              </span>
-              {BRAND.name}
+              Request a quote
             </LocalizedClientLink>
-            <p className="text-[13px] leading-relaxed text-konduit-muted">
-              {BRAND.tagline}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-12 small:gap-14">
-            <div>
-              <h4 className="mb-3 font-mono text-[11px] uppercase tracking-[0.06em] text-konduit-muted">
-                Shop
-              </h4>
-              <ul className="space-y-2.5 text-[13px] text-konduit-ink">
-                {NAV_LINKS.filter((l) => l.href.startsWith("/categories")).map(
-                  (link) => (
-                    <li key={link.href}>
-                      <LocalizedClientLink
-                        href={link.href}
-                        className="hover:text-konduit-blue-deep"
-                      >
-                        {link.label}
-                      </LocalizedClientLink>
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="mb-3 font-mono text-[11px] uppercase tracking-[0.06em] text-konduit-muted">
-                Business
-              </h4>
-              <ul className="space-y-2.5 text-[13px] text-konduit-ink">
-                <li>
-                  <LocalizedClientLink
-                    href="/quote"
-                    className="hover:text-konduit-blue-deep"
-                  >
-                    Request a quote
-                  </LocalizedClientLink>
-                </li>
-                <li>
-                  <LocalizedClientLink
-                    href="/track"
-                    className="hover:text-konduit-blue-deep"
-                  >
-                    Track an order
-                  </LocalizedClientLink>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="mb-3 font-mono text-[11px] uppercase tracking-[0.06em] text-konduit-muted">
-                Company
-              </h4>
-              <ul className="space-y-2.5 text-[13px] text-konduit-ink">
-                <li>
-                  <a
-                    href="mailto:hello@konduit.co.zw"
-                    className="hover:text-konduit-blue-deep"
-                  >
-                    About Konduit
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="mailto:hello@konduit.co.zw"
-                    className="hover:text-konduit-blue-deep"
-                  >
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
+            <LocalizedClientLink
+              href="/track"
+              className="text-[var(--color-text)] no-underline hover:text-[var(--color-accent)]"
+            >
+              Track an order
+            </LocalizedClientLink>
           </div>
         </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-konduit-line pt-5 text-xs text-konduit-muted">
-          <span>© {new Date().getFullYear()} Konduit Ltd.</span>
-          <span>Delivered on a promise, not a guess.</span>
+        <div>
+          <p className="mb-2.5 text-[11px] uppercase tracking-[0.08em] opacity-60">
+            Company
+          </p>
+          <div className="flex flex-col gap-2 text-[13.5px]">
+            <LocalizedClientLink
+              href="/about"
+              className="text-[var(--color-text)] no-underline hover:text-[var(--color-accent)]"
+            >
+              About Konduit
+            </LocalizedClientLink>
+            <a
+              href="mailto:hello@konduit.co.zw"
+              className="text-[var(--color-text)] no-underline hover:text-[var(--color-accent)]"
+            >
+              Contact
+            </a>
+          </div>
         </div>
+      </div>
+      <div className="content-container mt-8 text-[12.5px] opacity-60">
+        © {new Date().getFullYear()} Konduit Ltd. Delivered on a promise, not a
+        guess.
       </div>
     </footer>
   )

@@ -20,21 +20,19 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
           <div>{customer && <AccountNav customer={customer} />}</div>
           <div className="flex-1">{children}</div>
         </div>
-        <div className="flex flex-col items-start justify-between gap-6 border-t border-konduit-line py-10 small:flex-row small:items-end">
+        <div
+          className="flex flex-col items-start justify-between gap-6 border-t py-10 small:flex-row small:items-end"
+          style={{ borderColor: "var(--color-divider)" }}
+        >
           <div>
-            <h3 className="mb-2 font-display text-xl text-konduit-ink">
-              Need help with an order?
-            </h3>
-            <p className="max-w-md text-sm text-konduit-muted">
-              Track its route or message us on WhatsApp — local numbers, local
+            <h3 className="mb-2 text-xl">Need help with an order?</h3>
+            <p className="max-w-md text-sm opacity-75">
+              Track its route or message us on WhatsApp: local numbers, local
               hours.
             </p>
           </div>
-          <LocalizedClientLink
-            href="/track"
-            className="text-sm font-semibold text-konduit-blue-deep hover:underline"
-          >
-            Track an order →
+          <LocalizedClientLink href="/track" className="btn btn-secondary">
+            Track an order
           </LocalizedClientLink>
         </div>
       </div>

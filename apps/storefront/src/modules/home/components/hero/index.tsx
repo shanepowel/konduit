@@ -1,50 +1,23 @@
 import { BRAND } from "@lib/constants/brand"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import RouteDiagram from "@modules/home/components/route-diagram"
 
-type HeroProps = {
-  deliveryDays?: number | null
-}
-
-const Hero = ({ deliveryDays }: HeroProps) => {
-  const routeDays = deliveryDays ?? BRAND.defaultDeliveryDays
-
+const Hero = () => {
   return (
-    <section className="relative overflow-hidden border-b border-konduit-line bg-konduit-paper">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.35]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 12% 18%, rgba(27,78,140,0.12), transparent 42%), radial-gradient(circle at 88% 8%, rgba(193,98,43,0.10), transparent 36%)",
-        }}
-      />
-      <div className="content-container relative py-16 small:py-24">
-        <p className="konduit-eyebrow konduit-fade-up">{BRAND.eyebrow}</p>
-        <h1 className="mt-5 max-w-[18ch] font-display text-4xl leading-[1.12] tracking-tight text-konduit-ink small:text-[50px] konduit-fade-up konduit-fade-up-delay-1">
-          Order it. It arrives in{" "}
-          <span className="text-konduit-blue">{BRAND.headlineAccent}</span>.
-        </h1>
-        <p className="mt-6 max-w-[34rem] text-base leading-relaxed text-konduit-muted small:text-[17px] konduit-fade-up konduit-fade-up-delay-2">
-          {BRAND.subhead}
-        </p>
-        <div className="mt-8 flex flex-wrap gap-3 konduit-fade-up konduit-fade-up-delay-3">
-          <LocalizedClientLink
-            href="/store"
-            className="inline-flex items-center rounded-soft bg-konduit-blue px-7 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-konduit-blue-deep"
-          >
-            {BRAND.primaryCta}
-          </LocalizedClientLink>
-          <LocalizedClientLink
-            href="/quote"
-            className="inline-flex items-center rounded-soft border border-konduit-line bg-transparent px-7 py-3.5 text-[15px] font-semibold text-konduit-ink transition-colors hover:border-konduit-ink"
-          >
-            {BRAND.secondaryCta}
-          </LocalizedClientLink>
-        </div>
-        <div className="mt-14 max-w-3xl">
-          <RouteDiagram deliveryDays={routeDays} />
-        </div>
+    <section className="relative py-16 small:py-16">
+      <span className="tag tag-accent-2 mb-5 kn-fade-up">{BRAND.eyebrow}</span>
+      <h1 className="mb-5 max-w-[16ch] text-[clamp(36px,5vw,58px)] leading-[1.08] kn-fade-up kn-fade-up-delay-1">
+        {BRAND.headline}
+      </h1>
+      <p className="mb-7 max-w-[56ch] text-[17px] leading-relaxed opacity-85 kn-fade-up kn-fade-up-delay-2">
+        {BRAND.subhead}
+      </p>
+      <div className="flex flex-wrap gap-3 kn-fade-up kn-fade-up-delay-3">
+        <LocalizedClientLink href="/quote" className="btn btn-primary">
+          {BRAND.primaryCta}
+        </LocalizedClientLink>
+        <LocalizedClientLink href="/store" className="btn btn-secondary">
+          {BRAND.secondaryCta}
+        </LocalizedClientLink>
       </div>
     </section>
   )

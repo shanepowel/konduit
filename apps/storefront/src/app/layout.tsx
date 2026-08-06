@@ -1,37 +1,30 @@
 import { getBaseURL } from "@lib/util/env"
 import { Metadata } from "next"
-import { IBM_Plex_Mono, IBM_Plex_Sans, Unbounded } from "next/font/google"
+import { Caprasimo, Figtree } from "next/font/google"
 import "styles/globals.css"
 
-const ibmPlexSans = IBM_Plex_Sans({
+const figtree = Figtree({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-ibm-plex-sans",
+  weight: ["400", "600", "700"],
+  variable: "--font-figtree",
   display: "swap",
 })
 
-const ibmPlexMono = IBM_Plex_Mono({
+const caprasimo = Caprasimo({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-ibm-plex-mono",
-  display: "swap",
-})
-
-const unbounded = Unbounded({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-unbounded",
+  weight: ["400"],
+  variable: "--font-caprasimo",
   display: "swap",
 })
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
   title: {
-    default: "Konduit — Order it. It arrives in 30 days.",
+    default: "Konduit: Secure the technology your business runs on",
     template: "%s | Konduit",
   },
   description:
-    "Servers, telecoms infrastructure and devices, and imported goods for Zimbabwe — one account, one delivery promise, tracked door to door.",
+    "Servers, telecoms build-out and specified imports, placed through UK, USA and China supplier networks and cleared into Southern Africa.",
 }
 
 export default function RootLayout(props: { children: React.ReactNode }) {
@@ -39,10 +32,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     <html
       lang="en"
       data-mode="light"
-      className={`${ibmPlexSans.variable} ${ibmPlexMono.variable} ${unbounded.variable}`}
+      className={`${figtree.variable} ${caprasimo.variable}`}
     >
-      <body className={ibmPlexSans.className}>
-        <main className="relative min-h-screen bg-konduit-paper text-konduit-ink">
+      <body className={figtree.className}>
+        <main className="relative min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
           {props.children}
         </main>
       </body>

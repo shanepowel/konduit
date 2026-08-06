@@ -21,9 +21,12 @@ export default async function Nav() {
 
   return (
     <div className="sticky top-0 inset-x-0 z-50">
-      <header className="border-b border-konduit-line bg-konduit-paper/95 backdrop-blur-md">
-        <nav className="content-container flex h-[68px] items-center justify-between text-sm text-konduit-muted">
-          <div className="flex flex-1 items-center gap-4">
+      <header
+        className="border-b bg-[var(--color-bg)]"
+        style={{ borderColor: "var(--color-divider)" }}
+      >
+        <nav className="content-container flex h-[68px] items-center gap-7 text-sm">
+          <div className="flex items-center gap-3">
             <div className="small:hidden">
               <SideMenu
                 regions={regions}
@@ -34,32 +37,26 @@ export default async function Nav() {
             </div>
             <LocalizedClientLink
               href="/"
-              className="flex items-center gap-2 font-display text-[19px] font-semibold text-konduit-ink"
+              className="nav-brand text-[var(--color-text)] no-underline"
               data-testid="nav-store-link"
             >
-              <span
-                aria-hidden
-                className="relative inline-block h-4 w-4 rounded-full border-2 border-konduit-copper"
-              >
-                <span className="absolute left-1/2 top-1/2 h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-konduit-copper" />
-              </span>
               Konduit
             </LocalizedClientLink>
           </div>
 
-          <div className="hidden items-center gap-8 small:flex">
+          <div className="mr-auto hidden items-center gap-6 small:flex">
             {NAV_LINKS.map((link) => (
               <LocalizedClientLink
                 key={link.href}
                 href={link.href}
-                className="hover:text-konduit-ink transition-colors"
+                className="text-[14px] text-[var(--color-text)] no-underline opacity-85 transition-colors hover:text-[var(--color-accent)]"
               >
                 {link.label}
               </LocalizedClientLink>
             ))}
           </div>
 
-          <div className="flex flex-1 items-center justify-end gap-4">
+          <div className="ml-auto flex items-center gap-3">
             <div className="hidden small:block">
               <CurrencySelect
                 regions={regions}
@@ -67,16 +64,19 @@ export default async function Nav() {
               />
             </div>
             <LocalizedClientLink
-              className="hidden rounded-soft border border-konduit-line px-4 py-2 font-semibold text-konduit-ink transition-colors hover:border-konduit-ink small:inline-flex"
+              className="hidden text-[14px] text-[var(--color-text)] no-underline small:inline"
               href="/account"
               data-testid="nav-account-link"
             >
               Sign in
             </LocalizedClientLink>
+            <LocalizedClientLink href="/quote" className="btn btn-primary">
+              Request a quote
+            </LocalizedClientLink>
             <Suspense
               fallback={
                 <LocalizedClientLink
-                  className="inline-flex rounded-soft bg-konduit-blue px-4 py-2 font-semibold text-white"
+                  className="btn btn-secondary"
                   href="/cart"
                   data-testid="nav-cart-link"
                 >

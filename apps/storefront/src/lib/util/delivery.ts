@@ -30,6 +30,16 @@ export function getSourcingType(
   return null
 }
 
+export function getSupplierOrigin(
+  metadata?: Record<string, unknown> | null
+): string | null {
+  const value = metadata?.supplier_origin ?? metadata?.origin
+  if (typeof value === "string" && value.trim()) {
+    return value.trim()
+  }
+  return null
+}
+
 /** Short label for product cards / PDP footers. */
 export function formatDeliveryLabel(
   metadata?: Record<string, unknown> | null
@@ -39,7 +49,7 @@ export function formatDeliveryLabel(
   }
   const days = getDeliveryWindowDays(metadata)
   if (days == null) {
-    return `${BRAND.defaultDeliveryDays}-day delivery`
+    return `Up to ${BRAND.defaultDeliveryDays}-day delivery`
   }
   return `${days}-day delivery`
 }
@@ -49,10 +59,17 @@ export function formatDeliveryEta(
   metadata?: Record<string, unknown> | null
 ): string | null {
   if (getSourcingType(metadata) === "quote_only") {
-    return "Quote only — we confirm pricing and a delivery date after your request."
+    return "Quote only. We confirm pricing and a delivery date after your request."
   }
-  const days = getDeliveryWindowDays(metadata) ?? BRAND.defaultDeliveryDays
-  return `Target delivery: ${days} days, order to doorstep.`
+  const days = getDeliveryWindowDays(metadata)
+  const origin = getSupplierOrigin(metadata)
+  if (days == null) {
+    return `Target delivery: up to ${BRAND.defaultDeliveryDays} days, quote to doorstep.`
+  }
+  const originBit = origin
+    ? ` · placed with a ${origin}-based OEM supplier`
+    : ""
+  return `${days}-day delivery to Harare, on quote confirmation${originBit}`
 }
 
 export function formatCategoryLabel(
@@ -66,5 +83,5 @@ export function formatCategoryLabel(
   if (!name) {
     return null
   }
-  return name.toUpperCase()
+  return name
 }
