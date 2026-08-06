@@ -27,7 +27,7 @@ const unbounded = Unbounded({
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
   title: {
-    default: "Konduit — Order it. It arrives in two weeks.",
+    default: "Konduit — Order it. It arrives in 30 days.",
     template: "%s | Konduit",
   },
   description:

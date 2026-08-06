@@ -1,4 +1,4 @@
-import { BRAND, NAV_LINKS, QUOTE_MAILTO } from "@lib/constants/brand"
+import { BRAND, NAV_LINKS } from "@lib/constants/brand"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export default async function Footer() {
@@ -51,16 +51,16 @@ export default async function Footer() {
               </h4>
               <ul className="space-y-2.5 text-[13px] text-konduit-ink">
                 <li>
-                  <a
-                    href={QUOTE_MAILTO}
+                  <LocalizedClientLink
+                    href="/quote"
                     className="hover:text-konduit-blue-deep"
                   >
                     Request a quote
-                  </a>
+                  </LocalizedClientLink>
                 </li>
                 <li>
                   <LocalizedClientLink
-                    href="/account/orders"
+                    href="/track"
                     className="hover:text-konduit-blue-deep"
                   >
                     Track an order

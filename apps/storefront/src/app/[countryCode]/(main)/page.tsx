@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 
+import { BRAND } from "@lib/constants/brand"
 import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 import { getDeliveryWindowDays } from "@lib/util/delivery"
@@ -9,9 +10,8 @@ import TrustStrip from "@modules/home/components/trust-strip"
 import WaysToBuy from "@modules/home/components/ways-to-buy"
 
 export const metadata: Metadata = {
-  title: "Konduit — Order it. It arrives in two weeks.",
-  description:
-    "Servers, telecoms infrastructure and devices, and imported goods for Zimbabwe — one account, one delivery promise, tracked door to door.",
+  title: `Konduit — ${BRAND.headline}`,
+  description: BRAND.subhead,
 }
 
 export default async function Home(props: {
@@ -38,7 +38,7 @@ export default async function Home(props: {
   const deliveryDays =
     products
       .map((product) => getDeliveryWindowDays(product.metadata))
-      .find((days) => days != null) ?? 14
+      .find((days) => days != null) ?? BRAND.defaultDeliveryDays
 
   return (
     <>

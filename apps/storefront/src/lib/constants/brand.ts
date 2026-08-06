@@ -3,16 +3,22 @@ export const BRAND = {
   tagline:
     "Technology supply, telecoms infrastructure, and imported goods for Zimbabwe — delivered on a promise, not a guess.",
   eyebrow: "Sourced globally · routed to Zimbabwe",
-  headline: "Order it. It arrives in two weeks.",
+  headline: "Order it. It arrives in 30 days.",
+  headlineAccent: "30 days",
   subhead:
     "Servers and networking gear. Telecoms infrastructure and devices. Imported goods you can't source locally. One account, one delivery promise, tracked door to door.",
+  primaryCta: "Browse the catalogue",
+  secondaryCta: "Request a business quote",
+  defaultDeliveryDays: 30,
+  whatsappNote:
+    "Questions about this order? Message us on WhatsApp — we can see this same tracking on our end.",
 } as const
 
 export const NAV_LINKS = [
   { label: "Infrastructure", href: "/categories/infrastructure" },
   { label: "Telecoms", href: "/categories/telecoms" },
   { label: "Imports", href: "/categories/imports" },
-  { label: "Track an order", href: "/account/orders" },
+  { label: "Track an order", href: "/track" },
 ] as const
 
 export const WAYS_TO_BUY = [
@@ -33,7 +39,7 @@ export const WAYS_TO_BUY = [
   {
     node: "Imports",
     title: "Marketplace goods",
-    body: "Curated imported products not readily available locally — priced, in stock, and covered by the same two-week delivery promise.",
+    body: "Curated imported products not readily available locally — priced, in stock, and covered by the same 30-day delivery promise.",
     href: "/categories/imports",
     cta: "View marketplace",
   },
@@ -50,12 +56,16 @@ export const CATEGORY_INTROS: Record<string, string> = {
   "telecoms-devices":
     "Routers, radios, VSAT equipment, and business mobile devices, in stock and ready to ship. Buy directly — no quote needed for standard orders.",
   imports:
-    "Curated goods sourced internationally and landed in Zimbabwe on a two-week delivery window. What's listed is what's available — no backorders dressed up as stock.",
+    "Curated goods sourced internationally and landed in Zimbabwe on a 30-day delivery window. What's listed is what's available — no backorders dressed up as stock.",
 }
 
+/**
+ * Payment methods stay out until Paynow is live.
+ * When ready, insert: { title: "EcoCash · OneMoney · Card", body: "Pay the way that suits the order" }
+ */
 export const TRUST_ITEMS = [
   {
-    title: "14 days",
+    title: "30 days",
     body: "Target delivery window, order to doorstep",
   },
   {
@@ -68,12 +78,61 @@ export const TRUST_ITEMS = [
   },
 ] as const
 
-export const ROUTE_NODES = [
-  { place: "Sourced", day: "Day 1", pending: false },
-  { place: "In transit", day: "Day 2–8", pending: false },
-  { place: "Customs", day: "Day 9–11", pending: false },
-  { place: "Harare", day: "Day 14", pending: true },
+/** Baseline route waypoints for a 30-day window (scaled at render time). */
+export const ROUTE_BASELINE = {
+  days: 30,
+  nodes: [
+    { place: "Sourced", startDay: 1, endDay: 1 },
+    { place: "In transit", startDay: 2, endDay: 18 },
+    { place: "Customs", startDay: 19, endDay: 25 },
+    { place: "Harare", startDay: 30, endDay: 30 },
+  ],
+} as const
+
+export const LOGISTICS_STAGES = [
+  {
+    key: "sourced",
+    stage: "Sourced",
+    desc: "Confirmed with supplier and dispatched",
+  },
+  {
+    key: "in_transit",
+    stage: "In transit",
+    desc: "Left origin warehouse, en route to Zimbabwe",
+  },
+  {
+    key: "customs",
+    stage: "Customs",
+    desc: "Clearing at Beitbridge — usually 2–3 days",
+  },
+  {
+    key: "delivered",
+    stage: "Delivered — Harare",
+    desc: "Final delivery to your address",
+  },
 ] as const
 
-export const QUOTE_MAILTO =
-  "mailto:quotes@konduit.co.zw?subject=Business%20quote%20request"
+export type LogisticsStatus = (typeof LOGISTICS_STAGES)[number]["key"]
+
+export const QUOTE_CATEGORIES = [
+  "Infrastructure — servers & networking",
+  "Telecoms — infrastructure services",
+  "Telecoms — devices",
+  "Imports — marketplace goods",
+  "Other / mixed",
+] as const
+
+export const EMPTY_STATES = {
+  cart: "Nothing in your cart yet. Browse the catalogue to get started.",
+  outOfStock:
+    "Not currently in stock. Request a quote and we'll confirm availability.",
+  quoteSubmitted:
+    "Quote request sent. We'll come back to you within one business day with pricing and a delivery date.",
+  orderPlaced:
+    "Order confirmed — reference {ref}. Track its route from Track an order.",
+  paymentFailed:
+    "Payment didn't go through. No charge was made — try again or choose a different payment method.",
+  noOrders:
+    "You don't have any orders yet. Browse the catalogue to place your first one.",
+  notFound: "The page you tried to open doesn't exist.",
+} as const

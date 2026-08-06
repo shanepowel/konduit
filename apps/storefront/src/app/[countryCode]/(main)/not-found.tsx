@@ -1,20 +1,26 @@
 import { Metadata } from "next"
 
-import InteractiveLink from "@modules/common/components/interactive-link"
+import { EMPTY_STATES } from "@lib/constants/brand"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export const metadata: Metadata = {
-  title: "404",
-  description: "Something went wrong",
+  title: "Page not found",
+  description: EMPTY_STATES.notFound,
 }
 
 export default function NotFound() {
   return (
-    <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]">
-      <h1 className="text-2xl-semi text-ui-fg-base">Page not found</h1>
-      <p className="text-small-regular text-ui-fg-base">
-        The page you tried to access does not exist.
+    <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-4 px-6 text-center">
+      <h1 className="font-display text-3xl text-konduit-ink">Page not found</h1>
+      <p className="max-w-md text-sm text-konduit-muted">
+        {EMPTY_STATES.notFound}
       </p>
-      <InteractiveLink href="/">Go to frontpage</InteractiveLink>
+      <LocalizedClientLink
+        href="/"
+        className="text-sm font-semibold text-konduit-blue-deep hover:underline"
+      >
+        Back to store →
+      </LocalizedClientLink>
     </div>
   )
 }

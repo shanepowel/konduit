@@ -1,3 +1,5 @@
+import { BRAND } from "@lib/constants/brand"
+
 export type SourcingType = "in_stock" | "pre_order" | "quote_only"
 
 export function getDeliveryWindowDays(
@@ -37,7 +39,7 @@ export function formatDeliveryLabel(
   }
   const days = getDeliveryWindowDays(metadata)
   if (days == null) {
-    return "14-day delivery"
+    return `${BRAND.defaultDeliveryDays}-day delivery`
   }
   return `${days}-day delivery`
 }
@@ -49,10 +51,7 @@ export function formatDeliveryEta(
   if (getSourcingType(metadata) === "quote_only") {
     return "Quote only — we confirm pricing and a delivery date after your request."
   }
-  const days = getDeliveryWindowDays(metadata)
-  if (days == null) {
-    return "Target delivery: 14 days, order to doorstep."
-  }
+  const days = getDeliveryWindowDays(metadata) ?? BRAND.defaultDeliveryDays
   return `Target delivery: ${days} days, order to doorstep.`
 }
 

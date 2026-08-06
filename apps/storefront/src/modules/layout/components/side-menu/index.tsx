@@ -1,7 +1,7 @@
 "use client"
 
 import { Popover, PopoverPanel, Transition } from "@headlessui/react"
-import { NAV_LINKS, QUOTE_MAILTO } from "@lib/constants/brand"
+import { NAV_LINKS } from "@lib/constants/brand"
 import useToggleState from "@lib/hooks/use-toggle-state"
 import { ArrowRightMini, XMark } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
@@ -94,13 +94,13 @@ const SideMenu = ({
                         </LocalizedClientLink>
                       </li>
                       <li>
-                        <a
-                          href={QUOTE_MAILTO}
+                        <LocalizedClientLink
+                          href="/quote"
                           className="font-display text-2xl leading-10 hover:text-konduit-blue"
                           onClick={close}
                         >
                           Request a quote
-                        </a>
+                        </LocalizedClientLink>
                       </li>
                     </ul>
                     <div className="flex flex-col gap-y-6">

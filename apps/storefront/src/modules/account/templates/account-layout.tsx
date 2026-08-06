@@ -1,8 +1,7 @@
 import React from "react"
 
-import UnderlineLink from "@modules/common/components/interactive-link"
-
 import AccountNav from "../components/account-nav"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 
 interface AccountLayoutProps {
@@ -16,24 +15,27 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
 }) => {
   return (
     <div className="flex-1 small:py-12" data-testid="account-page">
-      <div className="flex-1 content-container h-full max-w-5xl mx-auto bg-white flex flex-col">
-        <div className="grid grid-cols-1  small:grid-cols-[240px_1fr] py-12">
+      <div className="content-container mx-auto flex h-full max-w-5xl flex-1 flex-col bg-konduit-raised">
+        <div className="grid grid-cols-1 py-12 small:grid-cols-[240px_1fr]">
           <div>{customer && <AccountNav customer={customer} />}</div>
           <div className="flex-1">{children}</div>
         </div>
-        <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">
+        <div className="flex flex-col items-start justify-between gap-6 border-t border-konduit-line py-10 small:flex-row small:items-end">
           <div>
-            <h3 className="text-xl-semi mb-4">Got questions?</h3>
-            <span className="txt-medium">
-              You can find frequently asked questions and answers on our
-              customer service page.
-            </span>
+            <h3 className="mb-2 font-display text-xl text-konduit-ink">
+              Need help with an order?
+            </h3>
+            <p className="max-w-md text-sm text-konduit-muted">
+              Track its route or message us on WhatsApp — local numbers, local
+              hours.
+            </p>
           </div>
-          <div>
-            <UnderlineLink href="/customer-service">
-              Customer Service
-            </UnderlineLink>
-          </div>
+          <LocalizedClientLink
+            href="/track"
+            className="text-sm font-semibold text-konduit-blue-deep hover:underline"
+          >
+            Track an order →
+          </LocalizedClientLink>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
-import { ROUTE_NODES } from "@lib/constants/brand"
+import { BRAND } from "@lib/constants/brand"
+import { buildRouteNodes } from "@lib/util/route-nodes"
 import { clx } from "@modules/common/components/ui"
 
 type RouteDiagramProps = {
@@ -7,12 +8,7 @@ type RouteDiagramProps = {
 }
 
 const RouteDiagram = ({ deliveryDays, className }: RouteDiagramProps) => {
-  const nodes = ROUTE_NODES.map((node, index) => {
-    if (index === ROUTE_NODES.length - 1 && deliveryDays != null) {
-      return { ...node, day: `Day ${deliveryDays}` }
-    }
-    return node
-  })
+  const nodes = buildRouteNodes(deliveryDays ?? BRAND.defaultDeliveryDays)
 
   return (
     <div className={clx("relative pt-8 pb-2 konduit-route-in", className)}>
@@ -27,7 +23,7 @@ const RouteDiagram = ({ deliveryDays, className }: RouteDiagramProps) => {
               className={clx(
                 "mx-auto mb-2 block h-3 w-3 rounded-full border-[3px] border-konduit-paper",
                 node.pending
-                  ? "bg-konduit-raised border-2 border-konduit-line"
+                  ? "border-2 border-konduit-line bg-konduit-raised"
                   : "bg-konduit-copper"
               )}
             />
