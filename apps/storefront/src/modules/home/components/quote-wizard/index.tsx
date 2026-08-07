@@ -154,7 +154,29 @@ const QuoteWizard = ({
       .join("\n")
 
     try {
-      // Must be a static NEXT_PUBLIC_ reference for Next.js to inline it.
+      const fallbackRef = `KQ-${Math.floor(10000 + Math.random() * 89999)}`
+      let ref = fallbackRef
+      let delivered = false
+
+      // Primary: email hello@konduit.co.zw so the team always sees the request.
+      const helloRes = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "quote",
+          name: f.contact,
+          email: f.email,
+          phone: f.phone,
+          company: f.company,
+          subject: `Quote request from ${f.company || f.contact}`,
+          message: notes,
+        }),
+      })
+      if (helloRes.ok) {
+        delivered = true
+      }
+
+      // Secondary: CRM / Medusa draft (best effort).
       const webhook = process.env.NEXT_PUBLIC_QUOTE_WEBHOOK_URL
       if (webhook) {
         const res = await fetch(webhook, {
@@ -162,15 +184,14 @@ const QuoteWizard = ({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         })
-        if (!res.ok) {
-          throw new Error("Webhook rejected the quote request")
-        }
-        const data = await res.json().catch(() => ({}))
-        setRefNumber(
-          data.reference ||
+        if (res.ok) {
+          delivered = true
+          const data = await res.json().catch(() => ({}))
+          ref =
+            data.reference ||
             data.ref ||
-            `KQ-${Math.floor(10000 + Math.random() * 89999)}`
-        )
+            ref
+        }
       } else {
         const backend =
           process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
@@ -192,17 +213,24 @@ const QuoteWizard = ({
             quantity: 1,
           }),
         })
-        if (!res.ok) {
+        if (res.ok) {
+          delivered = true
           const data = await res.json().catch(() => ({}))
-          throw new Error(data.message || "Quote request failed")
-        }
-        const data = await res.json().catch(() => ({}))
-        setRefNumber(
-          data.draft_order_id
+          ref = data.draft_order_id
             ? `KQ-${String(data.draft_order_id).slice(-5).toUpperCase()}`
-            : `KQ-${Math.floor(10000 + Math.random() * 89999)}`
+            : ref
+        }
+      }
+
+      if (!delivered) {
+        const helloData = await helloRes.json().catch(() => ({}))
+        throw new Error(
+          helloData.message ||
+            "Could not send quote request. Check email configuration or try again."
         )
       }
+
+      setRefNumber(ref)
       setDone(true)
     } catch (err) {
       setError(

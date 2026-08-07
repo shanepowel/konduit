@@ -208,3 +208,6 @@ export const EMPTY_STATES = {
 
 /** Optional n8n / Twenty CRM webhook. Falls back to Medusa quote-requests. */
 export const QUOTE_WEBHOOK_ENV = "NEXT_PUBLIC_QUOTE_WEBHOOK_URL"
+
+/** Inbox that receives contact form and quote notifications. */
+export const HELLO_EMAIL = "hello@konduit.co.zw"

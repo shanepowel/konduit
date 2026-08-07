@@ -35,3 +35,7 @@ Mirror `apps/storefront/.env.template` (and production values from Medusa Cloud)
 - `NEXT_PUBLIC_BASE_URL` → `https://www.konduit.co.zw` (used for Open Graph image URLs and canonicals; do **not** leave this as `konduit.medusajs.site` or Google/social previews point at the wrong host)
 - `NEXT_PUBLIC_DEFAULT_REGION` → `zw`
 - `NEXT_PUBLIC_QUOTE_WEBHOOK_URL` → optional n8n webhook that creates a Person + Opportunity in Twenty (Workflow A). When unset, quote wizard falls back to Medusa `/store/quote-requests`.
+- `RESEND_API_KEY` → required for `/contact` and quote inbox mail to `hello@konduit.co.zw`
+- `RESEND_FROM_EMAIL` → e.g. `Konduit <hello@konduit.co.zw>` (domain must be verified in Resend)
+- `CONTACT_TO_EMAIL` → `hello@konduit.co.zw` (default if unset)
+- `CONTACT_WEBHOOK_URL` → optional fallback if Resend is not configured

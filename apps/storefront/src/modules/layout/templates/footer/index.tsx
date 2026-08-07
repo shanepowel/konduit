@@ -62,12 +62,12 @@ export default async function Footer() {
             >
               About Konduit
             </LocalizedClientLink>
-            <a
-              href="mailto:hello@konduit.co.zw"
+            <LocalizedClientLink
+              href="/contact"
               className="text-[var(--color-text)] no-underline hover:text-[var(--color-accent)]"
             >
               Contact
-            </a>
+            </LocalizedClientLink>
           </div>
         </div>
       </div>

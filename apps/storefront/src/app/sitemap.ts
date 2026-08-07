@@ -4,6 +4,7 @@ import { MetadataRoute } from "next"
 const STATIC_PATHS = [
   "",
   "/about",
+  "/contact",
   "/quote",
   "/store",
   "/track",
