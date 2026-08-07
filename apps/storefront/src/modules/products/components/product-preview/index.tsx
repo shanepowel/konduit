@@ -1,5 +1,9 @@
-import { Text } from "@modules/common/components/ui"
 import { getProductPrice } from "@lib/util/get-product-price"
+import {
+  formatCategoryLabel,
+  formatDeliveryLabel,
+  getSupplierOrigin,
+} from "@lib/util/delivery"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "../thumbnail"
@@ -14,37 +18,49 @@ export default async function ProductPreview({
   isFeatured?: boolean
   region: HttpTypes.StoreRegion
 }) {
-  // const pricedProduct = await listProducts({
-  //   regionId: region.id,
-  //   queryParams: { id: [product.id!] },
-  // }).then(({ response }) => response.products[0])
-
-  // if (!pricedProduct) {
-  //   return null
-  // }
-
   const { cheapestPrice } = getProductPrice({
     product,
   })
 
+  const categoryLabel = formatCategoryLabel(product.categories)
+  const deliveryLabel = formatDeliveryLabel(product.metadata)
+  const origin = getSupplierOrigin(
+    product.metadata as Record<string, unknown>
+  )
+  const tag = [categoryLabel, origin ? `${origin} supplier` : null]
+    .filter(Boolean)
+    .join(" · ")
+
   return (
-    <LocalizedClientLink href={`/products/${product.handle}`} className="group">
-      <div data-testid="product-wrapper">
-        <Thumbnail
-          thumbnail={product.thumbnail}
-          images={product.images}
-          size="full"
-          isFeatured={isFeatured}
-        />
-        <div className="flex txt-compact-medium mt-4 justify-between">
-          <Text className="text-ui-fg-subtle" data-testid="product-title">
-            {product.title}
-          </Text>
-          <div className="flex items-center gap-x-2">
-            {cheapestPrice && <PreviewPrice price={cheapestPrice} />}
-          </div>
+    <LocalizedClientLink
+      href={`/products/${product.handle}`}
+      className="group text-[var(--color-text)] no-underline"
+    >
+      <article data-testid="product-wrapper" className="card elev-sm h-full gap-2 p-4">
+        <div className="washed overflow-hidden rounded-2xl">
+          <Thumbnail
+            thumbnail={product.thumbnail}
+            images={product.images}
+            size="full"
+            isFeatured={isFeatured}
+            className="!rounded-none aspect-[4/3]"
+          />
         </div>
-      </div>
+        {tag ? <span className="tag tag-accent">{tag}</span> : null}
+        <h3 className="card-title text-[15px]" data-testid="product-title">
+          {product.title}
+        </h3>
+        <p className="card-body text-[13px]">
+          {cheapestPrice ? (
+            <>
+              from <PreviewPrice price={cheapestPrice} />
+            </>
+          ) : (
+            "Quote on request"
+          )}{" "}
+          · {deliveryLabel}
+        </p>
+      </article>
     </LocalizedClientLink>
   )
 }

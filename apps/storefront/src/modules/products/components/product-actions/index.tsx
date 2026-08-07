@@ -4,13 +4,11 @@ import { addToCart } from "@lib/data/cart"
 import { useIntersection } from "@lib/hooks/use-in-view"
 import { getSourcingType } from "@lib/util/delivery"
 import { HttpTypes } from "@medusajs/types"
-import { Button } from "@modules/common/components/ui"
 import Divider from "@modules/common/components/divider"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
-import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
 import { useRouter } from "next/navigation"
 
@@ -38,10 +36,10 @@ export default function ProductActions({
   const searchParams = useSearchParams()
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
+  const [quantity, setQuantity] = useState(1)
   const [isAdding, setIsAdding] = useState(false)
   const countryCode = useParams().countryCode as string
 
-  // If there is only 1 variant, preselect the options
   useEffect(() => {
     if (product.variants?.length === 1) {
       const variantOptions = optionsAsKeymap(product.variants[0].options)
@@ -60,7 +58,6 @@ export default function ProductActions({
     })
   }, [product.variants, options])
 
-  // update the options when a variant is selected
   const setOptionValue = (optionId: string, value: string) => {
     setOptions((prev) => ({
       ...prev,
@@ -68,7 +65,6 @@ export default function ProductActions({
     }))
   }
 
-  //check if the selected options produce a valid variant
   const isValidVariant = useMemo(() => {
     return product.variants?.some((v) => {
       const variantOptions = optionsAsKeymap(v.options)
@@ -93,19 +89,15 @@ export default function ProductActions({
     router.replace(pathname + "?" + params.toString())
   }, [selectedVariant, isValidVariant])
 
-  // check if the selected variant is in stock
   const inStock = useMemo(() => {
-    // If we don't manage inventory, we can always add to cart
     if (selectedVariant && !selectedVariant.manage_inventory) {
       return true
     }
 
-    // If we allow back orders on the variant, we can add to cart
     if (selectedVariant?.allow_backorder) {
       return true
     }
 
-    // If there is inventory available, we can add to cart
     if (
       selectedVariant?.manage_inventory &&
       (selectedVariant?.inventory_quantity || 0) > 0
@@ -113,15 +105,12 @@ export default function ProductActions({
       return true
     }
 
-    // Otherwise, we can't add to cart
     return false
   }, [selectedVariant])
 
   const actionsRef = useRef<HTMLDivElement>(null)
-
   const inView = useIntersection(actionsRef, "0px")
 
-  // add the selected variant to the cart
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) return null
 
@@ -129,7 +118,7 @@ export default function ProductActions({
 
     await addToCart({
       variantId: selectedVariant.id,
-      quantity: 1,
+      quantity,
       countryCode,
     })
 
@@ -139,105 +128,111 @@ export default function ProductActions({
   const sourcing = getSourcingType(product.metadata)
   const isQuoteOnly = sourcing === "quote_only"
 
-  const handleQuoteRequest = async () => {
-    const email = window.prompt(
-      "Enter your work email for the quote follow-up:"
-    )
-    if (!email || !email.includes("@")) {
-      return
+  const goToQuote = (volume?: boolean) => {
+    const params = new URLSearchParams({
+      product: product.id,
+      title: product.title || "Quote request",
+    })
+    if (volume) {
+      params.set("volume", "1")
     }
-    setIsAdding(true)
-    try {
-      const backend =
-        process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
-      const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
-      const res = await fetch(`${backend}/store/quote-requests`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-publishable-api-key": publishableKey,
-        },
-        body: JSON.stringify({
-          email,
-          product_id: product.id,
-          product_title: product.title,
-          quantity: 1,
-          notes: "Storefront quote request",
-        }),
-      })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        window.alert(data.message || "Quote request failed")
-        return
-      }
-      window.location.href = `/${countryCode}/quote-requested`
-    } finally {
-      setIsAdding(false)
+    if (quantity > 1) {
+      params.set("qty", String(quantity))
     }
+    router.push(`/${countryCode}/quote?${params.toString()}`)
   }
 
   return (
     <>
-      <div className="flex flex-col gap-y-2" ref={actionsRef}>
-        <div>
-          {(product.variants?.length ?? 0) > 1 && (
-            <div className="flex flex-col gap-y-4">
-              {(product.options || []).map((option) => {
-                return (
-                  <div key={option.id}>
-                    <OptionSelect
-                      option={option}
-                      current={options[option.id]}
-                      updateOption={setOptionValue}
-                      title={option.title ?? ""}
-                      data-testid="product-options"
-                      disabled={!!disabled || isAdding}
-                    />
-                  </div>
-                )
-              })}
-              <Divider />
-            </div>
-          )}
+      <div className="flex flex-col gap-y-4" ref={actionsRef}>
+        {(product.variants?.length ?? 0) > 1 && (
+          <div className="flex flex-col gap-y-4">
+            {(product.options || []).map((option) => {
+              return (
+                <div key={option.id}>
+                  <OptionSelect
+                    option={option}
+                    current={options[option.id]}
+                    updateOption={setOptionValue}
+                    title={option.title ?? ""}
+                    data-testid="product-options"
+                    disabled={!!disabled || isAdding}
+                  />
+                </div>
+              )
+            })}
+            <Divider />
+          </div>
+        )}
+
+        <div className="field">
+          <label htmlFor="pdp-qty">Quantity</label>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="btn btn-secondary px-3.5"
+              disabled={!!disabled || quantity <= 1}
+              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              aria-label="Decrease quantity"
+            >
+              −
+            </button>
+            <input
+              id="pdp-qty"
+              className="input max-w-[88px] text-center"
+              type="number"
+              min={1}
+              value={quantity}
+              onChange={(e) => {
+                const next = Number(e.target.value)
+                setQuantity(Number.isFinite(next) && next > 0 ? next : 1)
+              }}
+              disabled={!!disabled}
+            />
+            <button
+              type="button"
+              className="btn btn-secondary px-3.5"
+              disabled={!!disabled}
+              onClick={() => setQuantity((q) => q + 1)}
+              aria-label="Increase quantity"
+            >
+              +
+            </button>
+          </div>
         </div>
 
-        {!isQuoteOnly && (
-          <ProductPrice product={product} variant={selectedVariant} />
-        )}
-
-        {isQuoteOnly ? (
-          <Button
-            onClick={handleQuoteRequest}
-            disabled={!!disabled || isAdding}
-            variant="primary"
-            className="w-full h-10"
-            isLoading={isAdding}
+        <div className="flex flex-col gap-2.5">
+          <button
+            type="button"
+            onClick={() => goToQuote(false)}
+            disabled={!!disabled}
+            className="btn btn-primary w-full"
             data-testid="request-quote-button"
           >
-            Request quote
-          </Button>
-        ) : (
-          <Button
-            onClick={handleAddToCart}
-            disabled={
-              !inStock ||
-              !selectedVariant ||
-              !!disabled ||
-              isAdding ||
-              !isValidVariant
-            }
-            variant="primary"
-            className="w-full h-10"
-            isLoading={isAdding}
-            data-testid="add-product-button"
+            Request a quote for this item
+          </button>
+          <button
+            type="button"
+            onClick={() => goToQuote(true)}
+            disabled={!!disabled}
+            className="btn btn-secondary w-full"
+            data-testid="request-volume-pricing-button"
           >
-            {!selectedVariant && !options
-              ? "Select variant"
-              : !inStock || !isValidVariant
-              ? "Out of stock"
-              : "Add to cart"}
-          </Button>
-        )}
+            Request volume pricing
+          </button>
+          {!isQuoteOnly && inStock && selectedVariant && isValidVariant ? (
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={!!disabled || isAdding}
+              className="btn btn-ghost w-full"
+              data-testid="add-product-button"
+            >
+              {isAdding ? "Adding…" : "Add to cart"}
+            </button>
+          ) : null}
+        </div>
+
         {!isQuoteOnly && (
           <MobileActions
             product={product}

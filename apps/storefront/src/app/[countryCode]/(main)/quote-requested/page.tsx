@@ -1,19 +1,25 @@
-import { Heading, Text } from "@modules/common/components/ui"
+import { EMPTY_STATES } from "@lib/constants/brand"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export default function QuoteRequestedPage() {
   return (
-    <div className="content-container py-24 flex flex-col gap-4 max-w-xl">
-      <Heading level="h1" className="text-3xl-regular">
-        Quote request received
-      </Heading>
-      <Text className="text-medium text-ui-fg-subtle">
-        Thanks — a draft order was created for our team. We will follow up with
-        pricing via email or WhatsApp. No payment was taken.
-      </Text>
-      <LocalizedClientLink href="/" className="text-ui-fg-interactive underline">
-        Back to store
-      </LocalizedClientLink>
+    <div className="content-container max-w-xl py-20">
+      <span className="tag tag-accent">Business quote</span>
+      <h1 className="mt-4 text-3xl">Quote request sent</h1>
+      <p className="mt-4 text-base leading-relaxed opacity-80">
+        {EMPTY_STATES.quoteSubmitted}
+      </p>
+      <p className="mt-3 text-sm opacity-70">
+        No payment was taken. A draft request was created for our team to price.
+      </p>
+      <div className="mt-8 flex flex-wrap gap-3">
+        <LocalizedClientLink href="/" className="btn btn-secondary">
+          Back to store
+        </LocalizedClientLink>
+        <LocalizedClientLink href="/track" className="btn btn-primary">
+          Track an order
+        </LocalizedClientLink>
+      </div>
     </div>
   )
 }

@@ -1,9 +1,35 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import "./organic.css";
+
+:root {
+  --font-heading: var(--font-caprasimo), "Caprasimo", system-ui, sans-serif;
+  --font-body: var(--font-figtree), "Figtree", system-ui, sans-serif;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+}
 
 @layer utilities {
-  /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -13,8 +39,8 @@
   }
 
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   input:focus ~ label,
@@ -35,9 +61,9 @@
   select:-webkit-autofill,
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
-    border: 1px solid #212121;
-    -webkit-text-fill-color: #212121;
-    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    border: 1px solid var(--color-divider);
+    -webkit-text-fill-color: var(--color-text);
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-surface) inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 
@@ -51,13 +77,37 @@
 
 @layer components {
   .content-container {
-    @apply max-w-[1440px] w-full mx-auto px-6;
+    @apply w-full max-w-[1200px] mx-auto px-5 small:px-[72px];
   }
 
-  .contrast-btn {
-    @apply px-4 py-2 border border-black rounded-full hover:bg-black hover:text-white transition-colors duration-200 ease-in;
+  .kn-fade-up {
+    animation: kn-fade-up 0.65s ease-out both;
   }
 
+  .kn-fade-up-delay-1 {
+    animation-delay: 0.08s;
+  }
+
+  .kn-fade-up-delay-2 {
+    animation-delay: 0.16s;
+  }
+
+  .kn-fade-up-delay-3 {
+    animation-delay: 0.24s;
+  }
+
+  @keyframes kn-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Medusa starter type scale — required by @apply and checkout/account chrome */
   .text-xsmall-regular {
     @apply text-[10px] leading-4 font-normal;
   }
@@ -109,4 +159,38 @@
   .text-3xl-semi {
     @apply text-[32px] leading-[44px] font-semibold;
   }
+}
+
+/* Legacy class aliases → Organic tokens (gradual migration) */
+.bg-konduit-paper {
+  background-color: var(--color-bg) !important;
+}
+.bg-konduit-raised {
+  background-color: var(--color-surface) !important;
+}
+.text-konduit-ink {
+  color: var(--color-text) !important;
+}
+.text-konduit-muted {
+  color: color-mix(in srgb, var(--color-text) 55%, transparent) !important;
+}
+.text-konduit-blue,
+.text-konduit-blue-deep {
+  color: var(--color-accent-700) !important;
+}
+.text-konduit-copper {
+  color: var(--color-accent) !important;
+}
+.border-konduit-line {
+  border-color: var(--color-divider) !important;
+}
+.bg-konduit-blue {
+  background-color: var(--color-accent) !important;
+}
+.hover\:bg-konduit-blue-deep:hover {
+  background-color: var(--color-accent-600) !important;
+}
+.font-display {
+  font-family: var(--font-heading) !important;
+  font-weight: 400 !important;
 }

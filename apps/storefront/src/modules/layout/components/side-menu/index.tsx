@@ -1,31 +1,31 @@
 "use client"
 
 import { Popover, PopoverPanel, Transition } from "@headlessui/react"
+import { NAV_LINKS } from "@lib/constants/brand"
 import useToggleState from "@lib/hooks/use-toggle-state"
-import { ArrowRightMini, XMark } from "@medusajs/icons"
+import { ArrowRight, Menu, X } from "lucide-react"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { Text, clx } from "@modules/common/components/ui"
+import { clx } from "@modules/common/components/ui"
 import { Fragment } from "react"
 import CountrySelect from "../country-select"
+import CurrencySelect from "../currency-select"
 import LanguageSelect from "../language-select"
 import { Locale } from "@lib/data/locales"
-
-
-const SideMenuItems = {
-  Home: "/",
-  Store: "/store",
-  Account: "/account",
-  Cart: "/cart",
-}
 
 type SideMenuProps = {
   regions: HttpTypes.StoreRegion[] | null
   locales: Locale[] | null
   currentLocale: string | null
+  activeCurrency?: string | null
 }
 
-const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
+const SideMenu = ({
+  regions,
+  locales,
+  currentLocale,
+  activeCurrency,
+}: SideMenuProps) => {
   const countryToggleState = useToggleState()
   const languageToggleState = useToggleState()
 
@@ -38,15 +38,16 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
               <div className="relative flex h-full">
                 <Popover.Button
                   data-testid="nav-menu-button"
-                  className="relative h-full flex items-center transition-all ease-out duration-200 focus:outline-none hover:text-ui-fg-base"
+                  className="relative flex h-full items-center transition-all duration-200 ease-out focus:outline-none hover:text-[var(--color-accent)]"
+                  aria-label="Open menu"
                 >
-                  Menu
+                  <Menu size={20} strokeWidth={2.75} />
                 </Popover.Button>
               </div>
 
               {open && (
                 <div
-                  className="fixed inset-0 z-[50] bg-black/0 pointer-events-auto"
+                  className="pointer-events-auto fixed inset-0 z-[50] bg-black/0"
                   onClick={close}
                   data-testid="side-menu-backdrop"
                 />
@@ -57,38 +58,63 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                 as={Fragment}
                 enter="transition ease-out duration-150"
                 enterFrom="opacity-0"
-                enterTo="opacity-100 backdrop-blur-2xl"
+                enterTo="opacity-100"
                 leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 backdrop-blur-2xl"
+                leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <PopoverPanel className="flex flex-col absolute w-full pr-4 sm:pr-0 sm:w-1/3 2xl:w-1/4 sm:min-w-min h-[calc(100vh-1rem)] z-[51] inset-x-0 text-sm text-ui-fg-on-color m-2 backdrop-blur-2xl">
+                <PopoverPanel className="absolute inset-x-0 z-[51] m-2 flex h-[calc(100vh-1rem)] w-full flex-col pr-4 text-sm sm:w-1/3 sm:min-w-min sm:pr-0 2xl:w-1/4">
                   <div
                     data-testid="nav-menu-popup"
-                    className="flex flex-col h-full bg-[rgba(3,7,18,0.5)] rounded-rounded justify-between p-6"
+                    className="card elev-md flex h-full flex-col justify-between p-6"
                   >
                     <div className="flex justify-end" id="xmark">
-                      <button data-testid="close-menu-button" onClick={close}>
-                        <XMark />
+                      <button
+                        data-testid="close-menu-button"
+                        onClick={close}
+                        aria-label="Close menu"
+                      >
+                        <X size={22} strokeWidth={2.75} />
                       </button>
                     </div>
-                    <ul className="flex flex-col gap-6 items-start justify-start">
-                      {Object.entries(SideMenuItems).map(([name, href]) => {
-                        return (
-                          <li key={name}>
-                            <LocalizedClientLink
-                              href={href}
-                              className="text-3xl leading-10 hover:text-ui-fg-disabled"
-                              onClick={close}
-                              data-testid={`${name.toLowerCase()}-link`}
-                            >
-                              {name}
-                            </LocalizedClientLink>
-                          </li>
-                        )
-                      })}
+                    <ul className="flex flex-col items-start justify-start gap-5">
+                      {NAV_LINKS.map((link) => (
+                        <li key={link.href}>
+                          <LocalizedClientLink
+                            href={link.href}
+                            className="font-heading text-2xl leading-10 no-underline hover:text-[var(--color-accent)]"
+                            onClick={close}
+                          >
+                            {link.label}
+                          </LocalizedClientLink>
+                        </li>
+                      ))}
+                      <li>
+                        <LocalizedClientLink
+                          href="/account"
+                          className="font-heading text-2xl leading-10 no-underline hover:text-[var(--color-accent)]"
+                          onClick={close}
+                        >
+                          Sign in
+                        </LocalizedClientLink>
+                      </li>
+                      <li>
+                        <LocalizedClientLink
+                          href="/quote"
+                          className="font-heading text-2xl leading-10 no-underline hover:text-[var(--color-accent)]"
+                          onClick={close}
+                        >
+                          Request a quote
+                        </LocalizedClientLink>
+                      </li>
                     </ul>
                     <div className="flex flex-col gap-y-6">
+                      {regions && (
+                        <CurrencySelect
+                          regions={regions}
+                          activeCurrency={activeCurrency}
+                        />
+                      )}
                       {!!locales?.length && (
                         <div
                           className="flex justify-between"
@@ -100,7 +126,9 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                             locales={locales}
                             currentLocale={currentLocale}
                           />
-                          <ArrowRightMini
+                          <ArrowRight
+                            size={16}
+                            strokeWidth={2.75}
                             className={clx(
                               "transition-transform duration-150",
                               languageToggleState.state ? "-rotate-90" : ""
@@ -119,17 +147,18 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                             regions={regions}
                           />
                         )}
-                        <ArrowRightMini
+                        <ArrowRight
+                          size={16}
+                          strokeWidth={2.75}
                           className={clx(
                             "transition-transform duration-150",
                             countryToggleState.state ? "-rotate-90" : ""
                           )}
                         />
                       </div>
-                      <Text className="flex justify-between txt-compact-small">
-                        © {new Date().getFullYear()} Konduit. All rights
-                        reserved.
-                      </Text>
+                      <p className="text-xs opacity-60">
+                        © {new Date().getFullYear()} Konduit Ltd.
+                      </p>
                     </div>
                   </div>
                 </PopoverPanel>
