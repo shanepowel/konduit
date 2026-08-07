@@ -3,7 +3,7 @@
 import { Popover, PopoverPanel, Transition } from "@headlessui/react"
 import { NAV_LINKS } from "@lib/constants/brand"
 import useToggleState from "@lib/hooks/use-toggle-state"
-import { ArrowRightMini, XMark } from "@medusajs/icons"
+import { ArrowRight, Menu, X } from "lucide-react"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { clx } from "@modules/common/components/ui"
@@ -39,8 +39,9 @@ const SideMenu = ({
                 <Popover.Button
                   data-testid="nav-menu-button"
                   className="relative flex h-full items-center transition-all duration-200 ease-out focus:outline-none hover:text-[var(--color-accent)]"
+                  aria-label="Open menu"
                 >
-                  Menu
+                  <Menu size={20} strokeWidth={2.75} />
                 </Popover.Button>
               </div>
 
@@ -68,8 +69,12 @@ const SideMenu = ({
                     className="card elev-md flex h-full flex-col justify-between p-6"
                   >
                     <div className="flex justify-end" id="xmark">
-                      <button data-testid="close-menu-button" onClick={close}>
-                        <XMark />
+                      <button
+                        data-testid="close-menu-button"
+                        onClick={close}
+                        aria-label="Close menu"
+                      >
+                        <X size={22} strokeWidth={2.75} />
                       </button>
                     </div>
                     <ul className="flex flex-col items-start justify-start gap-5">
@@ -121,7 +126,9 @@ const SideMenu = ({
                             locales={locales}
                             currentLocale={currentLocale}
                           />
-                          <ArrowRightMini
+                          <ArrowRight
+                            size={16}
+                            strokeWidth={2.75}
                             className={clx(
                               "transition-transform duration-150",
                               languageToggleState.state ? "-rotate-90" : ""
@@ -140,14 +147,16 @@ const SideMenu = ({
                             regions={regions}
                           />
                         )}
-                        <ArrowRightMini
+                        <ArrowRight
+                          size={16}
+                          strokeWidth={2.75}
                           className={clx(
                             "transition-transform duration-150",
                             countryToggleState.state ? "-rotate-90" : ""
                           )}
                         />
                       </div>
-                      <p className="text-xs text-konduit-muted">
+                      <p className="text-xs opacity-60">
                         © {new Date().getFullYear()} Konduit Ltd.
                       </p>
                     </div>

@@ -10,15 +10,10 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-4 px-6 text-center">
-      <h1 className="font-display text-3xl text-konduit-ink">Page not found</h1>
-      <p className="max-w-md text-sm text-konduit-muted">
-        {EMPTY_STATES.notFound}
-      </p>
-      <Link
-        href="/"
-        className="text-sm font-semibold text-konduit-blue-deep hover:underline"
-      >
-        Back to store →
+      <h1 className="text-3xl">Page not found</h1>
+      <p className="max-w-md text-sm opacity-75">{EMPTY_STATES.notFound}</p>
+      <Link href="/" className="btn btn-primary">
+        Back to store
       </Link>
     </div>
   )

@@ -28,12 +28,12 @@ const CurrencySelect = ({ regions, activeCurrency }: CurrencySelectProps) => {
   const current = (activeCurrency || currencies[0][0]).toUpperCase()
 
   return (
-    <label className="flex items-center gap-2 text-sm text-konduit-muted">
-      <span className="font-mono text-[11px] uppercase tracking-wider">
+    <label className="flex items-center gap-2 text-sm opacity-80">
+      <span className="text-[11px] uppercase tracking-wider opacity-70">
         Currency
       </span>
       <select
-        className="bg-transparent border border-konduit-line rounded-soft px-2 py-1 font-mono text-sm text-konduit-ink focus:outline-none focus:border-konduit-blue"
+        className="input !min-h-0 !rounded-full px-3 py-1.5 text-sm"
         value={current}
         onChange={(event) => {
           void updateCurrency(

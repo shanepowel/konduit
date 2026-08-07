@@ -2,6 +2,7 @@
 
 import { QUOTE_COUNTRIES } from "@lib/constants/brand"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { Check } from "lucide-react"
 import { FormEvent, useMemo, useState } from "react"
 
 type FormState = {
@@ -217,6 +218,12 @@ const QuoteWizard = ({
   if (done) {
     return (
       <div className="card elev-md mx-auto max-w-[640px] gap-3.5 p-10 text-center">
+        <span
+          className="mx-auto flex h-12 w-12 items-center justify-center rounded-full"
+          style={{ background: "var(--color-accent-2-100)" }}
+        >
+          <Check size={24} strokeWidth={2.75} aria-hidden />
+        </span>
         <span className="tag tag-accent-2 self-center">
           Reference {refNumber}
         </span>

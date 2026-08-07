@@ -2,7 +2,6 @@ import { notFound } from "next/navigation"
 import { Suspense } from "react"
 
 import { CATEGORY_INTROS } from "@lib/constants/brand"
-import InteractiveLink from "@modules/common/components/interactive-link"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
 import RefinementList from "@modules/store/components/refinement-list"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
@@ -56,11 +55,11 @@ export default function CategoryTemplate({
         hideOptionsPicker
       />
       <div className="w-full">
-        <div className="mb-4 flex flex-row flex-wrap gap-2 text-sm text-konduit-muted">
+        <div className="mb-4 flex flex-row flex-wrap gap-2 text-sm opacity-65">
           {parents.map((parent) => (
             <span key={parent.id} className="flex items-center gap-2">
               <LocalizedClientLink
-                className="hover:text-konduit-ink"
+                className="no-underline hover:text-[var(--color-accent)]"
                 href={`/categories/${parent.handle}`}
               >
                 {parent.name}
@@ -70,15 +69,12 @@ export default function CategoryTemplate({
           ))}
         </div>
 
-        <h1
-          className="font-display text-3xl tracking-tight text-konduit-ink"
-          data-testid="category-page-title"
-        >
+        <h1 className="text-3xl tracking-tight" data-testid="category-page-title">
           {category.name}
         </h1>
 
         {intro && (
-          <p className="mt-4 mb-8 max-w-3xl text-base leading-relaxed text-konduit-muted">
+          <p className="mb-8 mt-4 max-w-3xl text-base leading-relaxed opacity-80">
             {intro}
           </p>
         )}
@@ -88,9 +84,12 @@ export default function CategoryTemplate({
             <ul className="flex flex-wrap gap-3">
               {category.category_children?.map((c) => (
                 <li key={c.id}>
-                  <InteractiveLink href={`/categories/${c.handle}`}>
+                  <LocalizedClientLink
+                    href={`/categories/${c.handle}`}
+                    className="btn btn-secondary"
+                  >
                     {c.name}
-                  </InteractiveLink>
+                  </LocalizedClientLink>
                 </li>
               ))}
             </ul>

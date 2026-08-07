@@ -15,6 +15,7 @@ import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-relat
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { notFound } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
+import { BadgeCheck, PackageCheck, ShieldCheck } from "lucide-react"
 
 import ProductActionsWrapper from "./product-actions-wrapper"
 
@@ -163,24 +164,36 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 body: origin
                   ? `Sourced via our ${origin} supplier network`
                   : "Sourced via our supplier network",
+                icon: BadgeCheck,
               },
               {
                 title: "Warranty terms",
                 body: "OEM warranty and compliance docs included",
+                icon: ShieldCheck,
               },
               {
                 title: "Customs cleared",
                 body: "Import duty and permits handled in-house",
+                icon: PackageCheck,
               },
-            ].map((chip) => (
-              <div
-                key={chip.title}
-                className="card items-center gap-1 p-3 text-center"
-              >
-                <span className="card-title text-[13px]">{chip.title}</span>
-                <span className="card-body text-[11.5px]">{chip.body}</span>
-              </div>
-            ))}
+            ].map((chip) => {
+              const Icon = chip.icon
+              return (
+                <div
+                  key={chip.title}
+                  className="card items-center gap-1.5 p-3 text-center"
+                >
+                  <Icon
+                    size={20}
+                    strokeWidth={2.75}
+                    aria-hidden
+                    style={{ color: "var(--color-accent)" }}
+                  />
+                  <span className="card-title text-[13px]">{chip.title}</span>
+                  <span className="card-body text-[11.5px]">{chip.body}</span>
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>

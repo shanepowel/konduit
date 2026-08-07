@@ -12,7 +12,8 @@ const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
         {orders.map((o) => (
           <div
             key={o.id}
-            className="border-b border-konduit-line pb-6 last:border-none last:pb-0"
+            className="border-b pb-6 last:border-none last:pb-0"
+            style={{ borderColor: "var(--color-divider)" }}
           >
             <OrderCard order={o} />
           </div>
@@ -26,22 +27,17 @@ const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
       className="flex w-full flex-col items-start gap-y-4"
       data-testid="no-orders-container"
     >
-      <h2 className="font-display text-2xl text-konduit-ink">Orders</h2>
-      <p className="max-w-md text-base text-konduit-muted">
-        {EMPTY_STATES.noOrders}
-      </p>
+      <h2 className="text-2xl">Orders</h2>
+      <p className="max-w-md text-base opacity-80">{EMPTY_STATES.noOrders}</p>
       <LocalizedClientLink
         href="/store"
-        className="mt-2 text-sm font-semibold text-konduit-blue-deep hover:underline"
+        className="btn btn-primary mt-2"
         data-testid="continue-shopping-button"
       >
-        Browse the catalogue →
+        Browse the catalogue
       </LocalizedClientLink>
-      <LocalizedClientLink
-        href="/track"
-        className="text-sm font-semibold text-konduit-blue-deep hover:underline"
-      >
-        Track an order →
+      <LocalizedClientLink href="/track" className="btn btn-secondary">
+        Track an order
       </LocalizedClientLink>
     </div>
   )

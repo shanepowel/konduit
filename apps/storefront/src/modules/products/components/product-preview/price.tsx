@@ -10,15 +10,15 @@ export default async function PreviewPrice({ price }: { price: VariantPrice }) {
     <>
       {price.price_type === "sale" && (
         <span
-          className="mr-2 line-through text-konduit-muted"
+          className="mr-2 line-through opacity-55"
           data-testid="original-price"
         >
           {price.original_price}
         </span>
       )}
       <span
-        className={clx("text-konduit-ink", {
-          "text-konduit-copper": price.price_type === "sale",
+        className={clx({
+          "text-[var(--color-accent)]": price.price_type === "sale",
         })}
         data-testid="price"
       >

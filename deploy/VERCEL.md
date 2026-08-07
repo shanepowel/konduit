@@ -34,3 +34,4 @@ Mirror `apps/storefront/.env.template` (and production values from Medusa Cloud)
 - `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`
 - `NEXT_PUBLIC_BASE_URL` → production storefront URL
 - `NEXT_PUBLIC_DEFAULT_REGION` → `zw`
+- `NEXT_PUBLIC_QUOTE_WEBHOOK_URL` → optional n8n webhook that creates a Person + Opportunity in Twenty (Workflow A). When unset, quote wizard falls back to Medusa `/store/quote-requests`.

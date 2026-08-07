@@ -32,6 +32,8 @@ type SeedProduct = {
   handle: string;
   sku: string;
   manufacturer: string;
+  /** Supplier market shown on catalogue / PDP tags. */
+  supplier_origin: "UK" | "USA" | "China" | "Zimbabwe";
   description: string;
   category: string;
   usd: number;
@@ -46,6 +48,7 @@ const PRODUCTS: SeedProduct[] = [
     handle: "lenovo-thinkpad-t14-gen-5",
     sku: "21ML000EUK",
     manufacturer: "Lenovo",
+    supplier_origin: "UK",
     description:
       "Business laptop with Intel Core Ultra 7, 32 GB DDR5, 1 TB NVMe SSD.",
     category: "Infrastructure",
@@ -59,6 +62,7 @@ const PRODUCTS: SeedProduct[] = [
     handle: "dell-optiplex-7020-tower",
     sku: "7020-TWR-I7",
     manufacturer: "Dell",
+    supplier_origin: "USA",
     description: "Desktop tower with Intel Core i7, 16 GB DDR5, 512 GB SSD.",
     category: "Infrastructure",
     usd: 1299,
@@ -71,6 +75,7 @@ const PRODUCTS: SeedProduct[] = [
     handle: "cisco-catalyst-9200l-24p",
     sku: "C9200L-24P-4G-E",
     manufacturer: "Cisco",
+    supplier_origin: "USA",
     description: "24 x 1GbE PoE+ switch with 4 x 1G SFP uplinks, StackWise-160.",
     category: "Infrastructure",
     usd: 2499,
@@ -83,6 +88,7 @@ const PRODUCTS: SeedProduct[] = [
     handle: "ubiquiti-unifi-u6-pro",
     sku: "U6-Pro",
     manufacturer: "Ubiquiti",
+    supplier_origin: "UK",
     description: "Wi-Fi 6 access point, 5.3 Gbps aggregate, ceiling or wall mount.",
     category: "Telecoms Devices",
     usd: 179,
@@ -95,6 +101,7 @@ const PRODUCTS: SeedProduct[] = [
     handle: "dell-poweredge-r740",
     sku: "R740-BASE",
     manufacturer: "Dell",
+    supplier_origin: "USA",
     description:
       "2U rack server, dual Intel Xeon Scalable, up to 24 x 2.5\" drives.",
     category: "Infrastructure",
@@ -108,6 +115,7 @@ const PRODUCTS: SeedProduct[] = [
     handle: "hpe-msa-2060",
     sku: "R0Q85A",
     manufacturer: "HPE",
+    supplier_origin: "USA",
     description: "Hybrid storage array up to 336 TB, iSCSI/FC/SAS, dual controllers.",
     category: "Infrastructure",
     usd: 6599,
@@ -120,6 +128,7 @@ const PRODUCTS: SeedProduct[] = [
     handle: "telecoms-site-survey",
     sku: "TEL-SURVEY-001",
     manufacturer: "Konduit",
+    supplier_origin: "Zimbabwe",
     description:
       "On-site survey and network design for campus or multi-site deployments. Quote-based.",
     category: "Telecoms Infrastructure Services",
@@ -133,6 +142,7 @@ const PRODUCTS: SeedProduct[] = [
     handle: "imports-business-router-kit",
     sku: "IMP-RTR-KIT-01",
     manufacturer: "Curated",
+    supplier_origin: "China",
     description:
       "Curated import router kit for SME branches. Delivery window applies from order confirmation.",
     category: "Imports",
@@ -450,6 +460,7 @@ export default async function initial_data_seed({
       category_ids: [catByName[p.category]].filter(Boolean),
       metadata: {
         manufacturer: p.manufacturer,
+        supplier_origin: p.supplier_origin,
         delivery_window_days: p.delivery_window_days,
         sourcing_type: p.sourcing_type,
       },

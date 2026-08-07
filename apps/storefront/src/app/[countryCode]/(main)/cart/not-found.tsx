@@ -1,7 +1,6 @@
-import { Metadata } from "next"
-
 import { EMPTY_STATES } from "@lib/constants/brand"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Cart not found",
@@ -10,16 +9,11 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-4 px-6 text-center">
-      <h1 className="font-display text-3xl text-konduit-ink">Cart not found</h1>
-      <p className="max-w-md text-sm text-konduit-muted">
-        {EMPTY_STATES.cart}
-      </p>
-      <LocalizedClientLink
-        href="/store"
-        className="text-sm font-semibold text-konduit-blue-deep hover:underline"
-      >
-        Browse the catalogue →
+    <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-4 px-6 py-16 text-center">
+      <h1 className="text-3xl">Cart not found</h1>
+      <p className="max-w-md text-sm opacity-75">{EMPTY_STATES.notFound}</p>
+      <LocalizedClientLink href="/store" className="btn btn-primary">
+        Browse the catalogue
       </LocalizedClientLink>
     </div>
   )

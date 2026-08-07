@@ -99,7 +99,8 @@ const CartDropdown = ({
         >
           <PopoverPanel
             static
-            className="hidden small:block absolute top-[calc(100%+1px)] right-0 bg-white border-x border-b border-gray-200 w-[420px] text-ui-fg-base"
+            className="absolute right-0 top-[calc(100%+1px)] hidden w-[420px] rounded-b-[var(--radius-lg)] border-x border-b bg-[var(--color-surface)] text-[var(--color-text)] small:block"
+            style={{ borderColor: "var(--color-divider)" }}
             data-testid="nav-cart-dropdown"
           >
             <div className="p-4 flex items-center justify-center">

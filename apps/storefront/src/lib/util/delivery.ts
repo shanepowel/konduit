@@ -2,6 +2,17 @@ import { BRAND } from "@lib/constants/brand"
 
 export type SourcingType = "in_stock" | "pre_order" | "quote_only"
 
+/** Interim map when live catalog predates supplier_origin seed. */
+const MANUFACTURER_ORIGIN: Record<string, string> = {
+  Lenovo: "UK",
+  Dell: "USA",
+  Cisco: "USA",
+  Ubiquiti: "UK",
+  HPE: "USA",
+  Curated: "China",
+  Konduit: "Zimbabwe",
+}
+
 export function getDeliveryWindowDays(
   metadata?: Record<string, unknown> | null
 ): number | null {
@@ -36,6 +47,10 @@ export function getSupplierOrigin(
   const value = metadata?.supplier_origin ?? metadata?.origin
   if (typeof value === "string" && value.trim()) {
     return value.trim()
+  }
+  const manufacturer = metadata?.manufacturer
+  if (typeof manufacturer === "string" && manufacturer.trim()) {
+    return MANUFACTURER_ORIGIN[manufacturer.trim()] ?? null
   }
   return null
 }
