@@ -18,6 +18,9 @@ export const BRAND = {
   deliveryPromiseLabel: "Up to 30 days",
   deliveryPromiseBody:
     "Target window by origin and freight route, quote to doorstep",
+  /** Short description for Google / Open Graph (~155 chars). */
+  seoDescription:
+    "Technology and telecoms sourcing for Zimbabwe and Southern Africa. UK, USA and China suppliers, cleared in-house, delivered in up to 30 days.",
 } as const
 
 export const NAV_LINKS = [

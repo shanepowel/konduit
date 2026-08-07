@@ -1,3 +1,4 @@
+import { BRAND } from "@lib/constants/brand"
 import { getBaseURL } from "@lib/util/env"
 import { Metadata } from "next"
 import { Caprasimo, Figtree } from "next/font/google"
@@ -17,14 +18,45 @@ const caprasimo = Caprasimo({
   display: "swap",
 })
 
+const siteUrl = getBaseURL()
+
 export const metadata: Metadata = {
-  metadataBase: new URL(getBaseURL()),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Konduit: Secure the technology your business runs on",
     template: "%s | Konduit",
   },
-  description:
-    "Servers, telecoms build-out and specified imports, placed through UK, USA and China supplier networks and cleared into Southern Africa.",
+  description: BRAND.seoDescription,
+  applicationName: "Konduit",
+  keywords: [
+    "Konduit",
+    "Zimbabwe technology procurement",
+    "telecoms infrastructure",
+    "OEM servers",
+    "imports Southern Africa",
+    "customs clearance",
+  ],
+  authors: [{ name: "Konduit" }],
+  openGraph: {
+    type: "website",
+    locale: "en_ZW",
+    url: siteUrl,
+    siteName: "Konduit",
+    title: "Konduit: Secure the technology your business runs on",
+    description: BRAND.seoDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Konduit: Secure the technology your business runs on",
+    description: BRAND.seoDescription,
+  },
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function RootLayout(props: { children: React.ReactNode }) {

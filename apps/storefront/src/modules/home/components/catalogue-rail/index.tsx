@@ -80,10 +80,13 @@ const CatalogueRail = ({ products }: CatalogueRailProps) => {
                 <span className={`tag ${tagClass}`}>{tag.label}</span>
                 <p className="card-title text-[15px]">{product.title}</p>
                 <p className="card-body text-[13px]">
-                  {cheapestPrice
-                    ? `from ${cheapestPrice.calculated_price}`
-                    : "Quote on request"}{" "}
-                  · {delivery} on quote
+                  {delivery === "Quote only"
+                    ? "Quote on request"
+                    : `${
+                        cheapestPrice
+                          ? `from ${cheapestPrice.calculated_price}`
+                          : "Quote on request"
+                      } · ${delivery}`}
                 </p>
               </article>
             </LocalizedClientLink>

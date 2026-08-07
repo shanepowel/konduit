@@ -12,8 +12,19 @@ import TrustStrip from "@modules/home/components/trust-strip"
 import WaysToBuy from "@modules/home/components/ways-to-buy"
 
 export const metadata: Metadata = {
-  title: `Konduit: ${BRAND.headline.replace(/\.$/, "")}`,
-  description: BRAND.subhead,
+  // Absolute so the root template does not append "| Konduit" twice.
+  title: {
+    absolute: "Konduit: Secure the technology your business runs on",
+  },
+  description: BRAND.seoDescription,
+  openGraph: {
+    title: "Konduit: Secure the technology your business runs on",
+    description: BRAND.seoDescription,
+  },
+  twitter: {
+    title: "Konduit: Secure the technology your business runs on",
+    description: BRAND.seoDescription,
+  },
 }
 
 export default async function Home(props: {
