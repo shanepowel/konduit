@@ -1,13 +1,10 @@
-import { Container } from "@modules/common/components/ui"
-
 const SkeletonProductPreview = () => {
   return (
-    <div className="animate-pulse">
-      <Container className="aspect-[9/16] w-full bg-gray-100 bg-ui-bg-subtle" />
-      <div className="flex justify-between text-base-regular mt-2">
-        <div className="w-2/5 h-6 bg-gray-100"></div>
-        <div className="w-1/5 h-6 bg-gray-100"></div>
-      </div>
+    <div className="card elev-sm h-full gap-2 p-4" aria-hidden>
+      <div className="skeleton-block aspect-[4/3] w-full rounded-2xl" />
+      <div className="skeleton-block h-5 w-2/3 rounded-full" />
+      <div className="skeleton-block h-4 w-5/6 rounded-full" />
+      <div className="skeleton-block h-3.5 w-1/2 rounded-full" />
     </div>
   )
 }

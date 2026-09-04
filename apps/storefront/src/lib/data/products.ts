@@ -1,6 +1,7 @@
 "use server"
 
 import { sdk } from "@lib/config"
+import { mergeProductFields } from "@lib/util/product-fields"
 import { OptionValueIds } from "@lib/util/product-option-filters"
 import { sortProducts } from "@lib/util/sort-products"
 import { HttpTypes } from "@medusajs/types"
@@ -60,6 +61,8 @@ export const listProducts = async ({
     ...(await getCacheOptions("products")),
   }
 
+  const { fields: fieldsOverride, ...restQuery } = queryParams || {}
+
   return sdk.client
     .fetch<{ products: HttpTypes.StoreProduct[]; count: number }>(
       `/store/products`,
@@ -69,9 +72,8 @@ export const listProducts = async ({
           limit,
           offset,
           region_id: region?.id,
-          fields:
-            "*variants.calculated_price,+variants.inventory_quantity,*variants.images,*variants.options,+metadata,+tags,*categories,",
-          ...queryParams,
+          fields: mergeProductFields(fieldsOverride),
+          ...restQuery,
         },
         headers,
         next,

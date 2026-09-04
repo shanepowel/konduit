@@ -1,4 +1,4 @@
-import React, { Suspense } from "react"
+import React from "react"
 
 import {
   formatCategoryLabel,
@@ -8,10 +8,8 @@ import {
 } from "@lib/util/delivery"
 import { getProductPrice } from "@lib/util/get-product-price"
 import ImageGallery from "@modules/products/components/image-gallery"
-import ProductActions from "@modules/products/components/product-actions"
 import ProductTabs from "@modules/products/components/product-tabs"
 import RelatedProducts from "@modules/products/components/related-products"
-import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { notFound } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
@@ -55,12 +53,12 @@ function buildItemTimeline(days: number) {
   ]
 }
 
-const ProductTemplate: React.FC<ProductTemplateProps> = ({
+const ProductTemplate = async ({
   product,
   region,
   countryCode,
   images,
-}) => {
+}: ProductTemplateProps) => {
   if (!product || !product.id) {
     return notFound()
   }
@@ -118,12 +116,20 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           >
             {product.title}
           </h1>
-          <p
-            className="mb-5 text-[14.5px] opacity-75"
+          <div
+            className="mb-5 space-y-3 text-[14.5px] leading-relaxed opacity-75"
             data-testid="product-description"
           >
-            {product.description}
-          </p>
+            {(product.description || "")
+              .split(/\n{2,}/)
+              .map((paragraph) => paragraph.trim())
+              .filter(Boolean)
+              .map((paragraph) => (
+                <p key={paragraph.slice(0, 24)} className="m-0">
+                  {paragraph}
+                </p>
+              ))}
+          </div>
 
           <div className="mb-1.5 flex flex-wrap items-baseline gap-3.5">
             <span className="font-heading text-[30px]">
@@ -132,7 +138,8 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 : "Quote on request"}
             </span>
             <span className="text-[13px] opacity-60">
-              USD · indicative. Confirmed by supplier quote
+              {(region.currency_code || "usd").toUpperCase()} · indicative.
+              Confirmed by supplier quote
             </span>
           </div>
           {eta ? (
@@ -145,17 +152,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
             </p>
           ) : null}
 
-          <Suspense
-            fallback={
-              <ProductActions
-                disabled={true}
-                product={product}
-                region={region}
-              />
-            }
-          >
-            <ProductActionsWrapper id={product.id} region={region} />
-          </Suspense>
+          <ProductActionsWrapper id={product.id} region={region} />
 
           <div className="mt-6 grid grid-cols-1 gap-3 xsmall:grid-cols-3">
             {[
@@ -234,9 +231,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         data-testid="related-products-container"
       >
         <h2 className="mb-[18px] text-[22px]">Often quoted together</h2>
-        <Suspense fallback={<SkeletonRelatedProducts />}>
-          <RelatedProducts product={product} countryCode={countryCode} />
-        </Suspense>
+        <RelatedProducts product={product} countryCode={countryCode} />
       </div>
     </>
   )

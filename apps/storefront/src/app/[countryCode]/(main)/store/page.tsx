@@ -6,7 +6,8 @@ import StoreTemplate from "@modules/store/templates"
 
 export const metadata: Metadata = {
   title: "Store",
-  description: "Explore all of our products.",
+  description:
+    "Servers, networking, telecoms devices and specified imports, sourced from UK, USA and China suppliers and delivered across Zimbabwe and Southern Africa.",
 }
 
 type StorePageSearchParams = Record<string, string | string[] | undefined> & {

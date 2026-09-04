@@ -1,7 +1,4 @@
-import { Suspense } from "react"
-
 import { OptionValueIds } from "@lib/util/product-option-filters"
-import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
 import RefinementList from "@modules/store/components/refinement-list"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
@@ -32,14 +29,12 @@ const StoreTemplate = ({
         <h1 className="mb-8 text-3xl" data-testid="store-page-title">
           All products
         </h1>
-        <Suspense fallback={<SkeletonProductGrid />}>
-          <PaginatedProducts
-            sortBy={sort}
-            page={pageNumber}
-            countryCode={countryCode}
-            optionValueIds={optionValueIds}
-          />
-        </Suspense>
+        <PaginatedProducts
+          sortBy={sort}
+          page={pageNumber}
+          countryCode={countryCode}
+          optionValueIds={optionValueIds}
+        />
       </div>
     </div>
   )
