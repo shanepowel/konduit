@@ -1,6 +1,7 @@
 import { MedusaContainer } from "@medusajs/framework"
 import {
   ContainerRegistrationKeys,
+  MedusaError,
   ProductStatus,
 } from "@medusajs/framework/utils"
 import {
@@ -59,7 +60,8 @@ export default async function expand_catalogue({
   const stockLocationId = stockLocations?.[0]?.id
 
   if (!salesChannelId || !shippingProfileId) {
-    throw new Error(
+    throw new MedusaError(
+      MedusaError.Types.INVALID_DATA,
       "Store is missing a sales channel or shipping profile. Run the initial seed first."
     )
   }
