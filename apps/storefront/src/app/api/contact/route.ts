@@ -1,4 +1,4 @@
-import { notifyHello } from "@lib/email/notify-hello"
+import { notifyCustomer, notifyHello } from "@lib/email/notify-hello"
 import { NextRequest, NextResponse } from "next/server"
 
 type ContactBody = {
@@ -96,7 +96,45 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: result.error }, { status: 502 })
   }
 
-  return NextResponse.json({ ok: true, id: result.id })
+  let confirmationSent = false
+  if (type === "quote") {
+    const confirm = await notifyCustomer({
+      to: email,
+      subject: "We received your Konduit quote request",
+      text: [
+        `Hello ${name},`,
+        "",
+        "We have your quote request and a quote engineer will reply within one business day with priced line items and a delivery date.",
+        "",
+        company ? `Company: ${company}` : null,
+        "",
+        "Your specification:",
+        message,
+        "",
+        "Konduit",
+        "hello@konduit.co.zw",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+      html: `
+        <div style="font-family:system-ui,sans-serif;line-height:1.5;color:#201e1d">
+          <p>Hello ${escapeHtml(name)},</p>
+          <p>We have your quote request. A quote engineer will reply within one business day with priced line items and a delivery date.</p>
+          ${company ? `<p><strong>Company:</strong> ${escapeHtml(company)}</p>` : ""}
+          <p><strong>Your specification</strong></p>
+          <pre style="white-space:pre-wrap;font-family:inherit;background:#f5ead8;padding:16px;border-radius:12px">${escapeHtml(message)}</pre>
+          <p>Konduit<br/>hello@konduit.co.zw</p>
+        </div>
+      `,
+    })
+    confirmationSent = confirm.ok
+  }
+
+  return NextResponse.json({
+    ok: true,
+    id: result.id,
+    confirmation_sent: confirmationSent,
+  })
 }
 
 function escapeHtml(value: string) {

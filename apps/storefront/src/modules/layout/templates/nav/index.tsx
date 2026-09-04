@@ -1,5 +1,3 @@
-import { Suspense } from "react"
-
 import { NAV_LINKS } from "@lib/constants/brand"
 import { getCurrencyCode } from "@lib/data/cookies"
 import { listLocales } from "@lib/data/locales"
@@ -7,7 +5,6 @@ import { getLocale } from "@lib/data/locale-actions"
 import { listRegions } from "@lib/data/regions"
 import { StoreRegion } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import CartButton from "@modules/layout/components/cart-button"
 import CurrencySelect from "@modules/layout/components/currency-select"
 import SideMenu from "@modules/layout/components/side-menu"
 
@@ -73,19 +70,6 @@ export default async function Nav() {
             <LocalizedClientLink href="/quote" className="btn btn-primary">
               Request a quote
             </LocalizedClientLink>
-            <Suspense
-              fallback={
-                <LocalizedClientLink
-                  className="btn btn-secondary"
-                  href="/cart"
-                  data-testid="nav-cart-link"
-                >
-                  Cart
-                </LocalizedClientLink>
-              }
-            >
-              <CartButton />
-            </Suspense>
           </div>
         </nav>
       </header>

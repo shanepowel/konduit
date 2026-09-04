@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 
+import { getCurrencyCode } from "@lib/data/cookies"
 import QuoteWizard from "@modules/home/components/quote-wizard"
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ type Props = {
 export default async function QuotePage(props: Props) {
   const { countryCode } = await props.params
   const { product, title, volume, qty } = await props.searchParams
+  const currency = await getCurrencyCode()
 
   let defaultTitle = title
   if (volume === "1" && title) {
@@ -36,6 +38,7 @@ export default async function QuotePage(props: Props) {
         countryCode={countryCode}
         defaultProductId={product}
         defaultProductTitle={defaultTitle}
+        defaultCurrency={currency === "zwg" ? "zwg" : "usd"}
       />
     </div>
   )
