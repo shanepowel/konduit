@@ -1,4 +1,5 @@
 import { MedusaContainer } from "@medusajs/framework";
+import { KONDUIT_CATALOG } from "../lib/konduit-catalog";
 import {
   ContainerRegistrationKeys,
   ModuleRegistrationName,
@@ -27,131 +28,7 @@ import {
  */
 const ZWG_RATE = 28;
 
-type SeedProduct = {
-  title: string;
-  handle: string;
-  sku: string;
-  manufacturer: string;
-  /** Supplier market shown on catalogue / PDP tags. */
-  supplier_origin: "UK" | "USA" | "China" | "Zimbabwe";
-  description: string;
-  category: string;
-  usd: number;
-  stock: number;
-  delivery_window_days: number;
-  sourcing_type: "in_stock" | "pre_order" | "quote_only";
-};
-
-const PRODUCTS: SeedProduct[] = [
-  {
-    title: "ThinkPad T14 Gen 5",
-    handle: "lenovo-thinkpad-t14-gen-5",
-    sku: "21ML000EUK",
-    manufacturer: "Lenovo",
-    supplier_origin: "UK",
-    description:
-      "Business laptop with Intel Core Ultra 7, 32 GB DDR5, 1 TB NVMe SSD.",
-    category: "Infrastructure",
-    usd: 1899,
-    stock: 12,
-    delivery_window_days: 7,
-    sourcing_type: "in_stock",
-  },
-  {
-    title: "OptiPlex 7020 Tower",
-    handle: "dell-optiplex-7020-tower",
-    sku: "7020-TWR-I7",
-    manufacturer: "Dell",
-    supplier_origin: "USA",
-    description: "Desktop tower with Intel Core i7, 16 GB DDR5, 512 GB SSD.",
-    category: "Infrastructure",
-    usd: 1299,
-    stock: 0,
-    delivery_window_days: 12,
-    sourcing_type: "pre_order",
-  },
-  {
-    title: "Catalyst 9200L 24-port Switch",
-    handle: "cisco-catalyst-9200l-24p",
-    sku: "C9200L-24P-4G-E",
-    manufacturer: "Cisco",
-    supplier_origin: "USA",
-    description: "24 x 1GbE PoE+ switch with 4 x 1G SFP uplinks, StackWise-160.",
-    category: "Infrastructure",
-    usd: 2499,
-    stock: 0,
-    delivery_window_days: 14,
-    sourcing_type: "pre_order",
-  },
-  {
-    title: "UniFi U6 Pro Access Point",
-    handle: "ubiquiti-unifi-u6-pro",
-    sku: "U6-Pro",
-    manufacturer: "Ubiquiti",
-    supplier_origin: "UK",
-    description: "Wi-Fi 6 access point, 5.3 Gbps aggregate, ceiling or wall mount.",
-    category: "Telecoms Devices",
-    usd: 179,
-    stock: 25,
-    delivery_window_days: 5,
-    sourcing_type: "in_stock",
-  },
-  {
-    title: "PowerEdge R740 Rack Server",
-    handle: "dell-poweredge-r740",
-    sku: "R740-BASE",
-    manufacturer: "Dell",
-    supplier_origin: "USA",
-    description:
-      "2U rack server, dual Intel Xeon Scalable, up to 24 x 2.5\" drives.",
-    category: "Infrastructure",
-    usd: 4899,
-    stock: 0,
-    delivery_window_days: 21,
-    sourcing_type: "pre_order",
-  },
-  {
-    title: "HPE MSA 2060 Storage",
-    handle: "hpe-msa-2060",
-    sku: "R0Q85A",
-    manufacturer: "HPE",
-    supplier_origin: "USA",
-    description: "Hybrid storage array up to 336 TB, iSCSI/FC/SAS, dual controllers.",
-    category: "Infrastructure",
-    usd: 6599,
-    stock: 0,
-    delivery_window_days: 21,
-    sourcing_type: "pre_order",
-  },
-  {
-    title: "Site Survey & Network Design",
-    handle: "telecoms-site-survey",
-    sku: "TEL-SURVEY-001",
-    manufacturer: "Konduit",
-    supplier_origin: "Zimbabwe",
-    description:
-      "On-site survey and network design for campus or multi-site deployments. Quote-based.",
-    category: "Telecoms Infrastructure Services",
-    usd: 0,
-    stock: 0,
-    delivery_window_days: 14,
-    sourcing_type: "quote_only",
-  },
-  {
-    title: "Business Router Kit (Imports)",
-    handle: "imports-business-router-kit",
-    sku: "IMP-RTR-KIT-01",
-    manufacturer: "Curated",
-    supplier_origin: "China",
-    description:
-      "Curated import router kit for SME branches. Delivery window applies from order confirmation.",
-    category: "Imports",
-    usd: 449,
-    stock: 8,
-    delivery_window_days: 21,
-    sourcing_type: "in_stock",
-  },
-];
+const PRODUCTS = KONDUIT_CATALOG;
 
 export default async function initial_data_seed({
   container,
@@ -457,12 +334,13 @@ export default async function initial_data_seed({
       description: p.description,
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,
-      category_ids: [catByName[p.category]].filter(Boolean),
+      category_ids: p.categories.map((name) => catByName[name]).filter(Boolean),
       metadata: {
         manufacturer: p.manufacturer,
         supplier_origin: p.supplier_origin,
         delivery_window_days: p.delivery_window_days,
         sourcing_type: p.sourcing_type,
+        specs: p.specs,
       },
       options: [{ title: "Default", values: ["Default"] }],
       variants: [
