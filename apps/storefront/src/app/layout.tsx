@@ -3,6 +3,7 @@ import { getBaseURL } from "@lib/util/env"
 import { Metadata } from "next"
 import { Caprasimo, Figtree } from "next/font/google"
 import "styles/globals.css"
+import "styles/organic.css"
 
 const figtree = Figtree({
   subsets: ["latin"],

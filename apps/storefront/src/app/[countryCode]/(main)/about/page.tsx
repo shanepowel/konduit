@@ -5,7 +5,7 @@ import { COMPANY } from "@lib/constants/company"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export const metadata: Metadata = {
-  title: "About Konduit",
+  title: "About",
   description: BRAND.tagline,
 }
 

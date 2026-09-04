@@ -5,7 +5,7 @@ import ContactForm from "@modules/home/components/contact-form"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export const metadata: Metadata = {
-  title: "Contact Konduit",
+  title: "Contact",
   description:
     "Harare head office, Lusaka and Gaborone delivery hubs, and quote contacts for Konduit Ltd.",
 }
