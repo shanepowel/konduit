@@ -81,3 +81,43 @@ export async function notifyHello({
       "Email is not configured. Set RESEND_API_KEY (preferred) or CONTACT_WEBHOOK_URL on the storefront.",
   }
 }
+
+export async function notifyCustomer({
+  to,
+  subject,
+  text,
+  html,
+}: {
+  to: string
+  subject: string
+  text: string
+  html?: string
+}): Promise<{ ok: true; id?: string } | { ok: false; error: string }> {
+  const from =
+    process.env.RESEND_FROM_EMAIL || `Konduit <${HELLO_EMAIL}>`
+  const apiKey = process.env.RESEND_API_KEY
+
+  if (!apiKey) {
+    return { ok: false, error: "Customer confirmation requires RESEND_API_KEY" }
+  }
+
+  try {
+    const resend = new Resend(apiKey)
+    const { data, error } = await resend.emails.send({
+      from,
+      to: [to],
+      subject,
+      text,
+      html: html || undefined,
+    })
+    if (error) {
+      return { ok: false, error: error.message || "Resend rejected the email" }
+    }
+    return { ok: true, id: data?.id }
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Failed to send confirmation",
+    }
+  }
+}

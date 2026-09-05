@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { listProducts } from "@lib/data/products"
 import { getRegion, listRegions } from "@lib/data/regions"
+import { productMetaDescription, productOgImages } from "@lib/util/seo"
 import ProductTemplate from "@modules/products/templates"
 import { HttpTypes } from "@medusajs/types"
 
@@ -87,13 +88,23 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     notFound()
   }
 
+  const description = productMetaDescription(product.title, product.description)
+  const images = productOgImages(product)
+
   return {
-    title: `${product.title} | Konduit`,
-    description: `${product.title}`,
+    title: product.title,
+    description,
     openGraph: {
-      title: `${product.title} | Konduit`,
-      description: `${product.title}`,
-      images: product.thumbnail ? [product.thumbnail] : [],
+      title: product.title,
+      description,
+      type: "website",
+      images: images.length ? images.map((url) => ({ url })) : undefined,
+    },
+    twitter: {
+      card: images.length ? "summary_large_image" : "summary",
+      title: product.title,
+      description,
+      images: images.length ? images : undefined,
     },
   }
 }
@@ -114,11 +125,11 @@ export default async function ProductPage(props: Props) {
     queryParams: { handle: params.handle },
   }).then(({ response }) => response.products[0])
 
-  const images = getImagesForVariant(pricedProduct, selectedVariantId)
-
   if (!pricedProduct) {
     notFound()
   }
+
+  const images = getImagesForVariant(pricedProduct, selectedVariantId)
 
   return (
     <ProductTemplate

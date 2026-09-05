@@ -31,6 +31,7 @@ const STEP_LABELS = ["Company", "Requirements", "Delivery", "Review"] as const
 const initialForm = (defaults?: {
   productId?: string
   productTitle?: string
+  currency?: "usd" | "zwg"
 }): FormState => ({
   company: "",
   contact: "",
@@ -48,7 +49,7 @@ const initialForm = (defaults?: {
   budget: "",
   city: "",
   incoterm: "ddp",
-  currency: "usd",
+  currency: defaults?.currency || "usd",
   customsHelp: false,
   productId: defaults?.productId,
   productTitle: defaults?.productTitle,
@@ -58,12 +59,14 @@ type QuoteWizardProps = {
   countryCode: string
   defaultProductId?: string
   defaultProductTitle?: string
+  defaultCurrency?: "usd" | "zwg"
 }
 
 const QuoteWizard = ({
   countryCode,
   defaultProductId,
   defaultProductTitle,
+  defaultCurrency,
 }: QuoteWizardProps) => {
   const [step, setStep] = useState(1)
   const [done, setDone] = useState(false)
@@ -74,6 +77,7 @@ const QuoteWizard = ({
     initialForm({
       productId: defaultProductId,
       productTitle: defaultProductTitle,
+      currency: defaultCurrency,
     })
   )
 
@@ -154,11 +158,9 @@ const QuoteWizard = ({
       .join("\n")
 
     try {
-      const fallbackRef = `KQ-${Math.floor(10000 + Math.random() * 89999)}`
-      let ref = fallbackRef
+      let ref = ""
       let delivered = false
 
-      // Primary: email hello@konduit.co.zw so the team always sees the request.
       const helloRes = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -172,11 +174,14 @@ const QuoteWizard = ({
           message: notes,
         }),
       })
+      const helloData = await helloRes.json().catch(() => ({}))
       if (helloRes.ok) {
         delivered = true
+        if (helloData.id) {
+          ref = `KQ-${String(helloData.id).slice(-6).toUpperCase()}`
+        }
       }
 
-      // Secondary: CRM / Medusa draft (best effort).
       const webhook = process.env.NEXT_PUBLIC_QUOTE_WEBHOOK_URL
       if (webhook) {
         const res = await fetch(webhook, {
@@ -187,50 +192,47 @@ const QuoteWizard = ({
         if (res.ok) {
           delivered = true
           const data = await res.json().catch(() => ({}))
-          ref =
-            data.reference ||
-            data.ref ||
-            ref
+          ref = data.reference || data.ref || ref
         }
-      } else {
-        const backend =
-          process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
-        const publishableKey =
-          process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
-        const res = await fetch(`${backend}/store/quote-requests`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-publishable-api-key": publishableKey,
-          },
-          body: JSON.stringify({
-            email: f.email,
-            phone: f.phone || undefined,
-            company: f.company || undefined,
-            notes,
-            product_id: f.productId,
-            product_title: f.productTitle || categoriesLabel || "Business quote",
-            quantity: 1,
-          }),
-        })
-        if (res.ok) {
-          delivered = true
-          const data = await res.json().catch(() => ({}))
-          ref = data.draft_order_id
-            ? `KQ-${String(data.draft_order_id).slice(-5).toUpperCase()}`
-            : ref
+      }
+
+      const backend =
+        process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
+      const publishableKey =
+        process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
+      const medusaRes = await fetch(`${backend}/store/quote-requests`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-publishable-api-key": publishableKey,
+        },
+        body: JSON.stringify({
+          email: f.email,
+          phone: f.phone || undefined,
+          company: f.company || undefined,
+          notes,
+          product_id: f.productId,
+          product_title: f.productTitle || categoriesLabel || "Business quote",
+          quantity: 1,
+          currency: f.currency,
+        }),
+      })
+      if (medusaRes.ok) {
+        delivered = true
+        const data = await medusaRes.json().catch(() => ({}))
+        if (data.draft_order_id) {
+          ref = `KQ-${String(data.draft_order_id).slice(-5).toUpperCase()}`
         }
       }
 
       if (!delivered) {
-        const helloData = await helloRes.json().catch(() => ({}))
         throw new Error(
           helloData.message ||
             "Could not send quote request. Check email configuration or try again."
         )
       }
 
-      setRefNumber(ref)
+      setRefNumber(ref || `KQ-${Date.now().toString().slice(-6)}`)
       setDone(true)
     } catch (err) {
       setError(

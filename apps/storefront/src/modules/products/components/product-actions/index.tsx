@@ -38,6 +38,7 @@ export default function ProductActions({
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [quantity, setQuantity] = useState(1)
   const [isAdding, setIsAdding] = useState(false)
+  const [mobileReady, setMobileReady] = useState(false)
   const countryCode = useParams().countryCode as string
 
   useEffect(() => {
@@ -46,6 +47,10 @@ export default function ProductActions({
       setOptions(variantOptions ?? {})
     }
   }, [product.variants])
+
+  useEffect(() => {
+    setMobileReady(true)
+  }, [])
 
   const selectedVariant = useMemo(() => {
     if (!product.variants || product.variants.length === 0) {
@@ -126,7 +131,7 @@ export default function ProductActions({
   }
 
   const sourcing = getSourcingType(product.metadata)
-  const isQuoteOnly = sourcing === "quote_only"
+  const isBuyNow = sourcing === "in_stock"
 
   const goToQuote = (volume?: boolean) => {
     const params = new URLSearchParams({
@@ -201,6 +206,12 @@ export default function ProductActions({
           </div>
         </div>
 
+        <p className="m-0 text-[13px] opacity-70" data-testid="purchase-path">
+          {isBuyNow
+            ? "In stock. Request a quote to confirm the landed price, or buy now if you already have a written quote."
+            : "This item is sourced to order. Request a quote. The website price is indicative and is not an offer to sell."}
+        </p>
+
         <div className="flex flex-col gap-2.5">
           <button
             type="button"
@@ -220,7 +231,7 @@ export default function ProductActions({
           >
             Request volume pricing
           </button>
-          {!isQuoteOnly && inStock && selectedVariant && isValidVariant ? (
+          {isBuyNow && inStock && selectedVariant && isValidVariant ? (
             <button
               type="button"
               onClick={handleAddToCart}
@@ -228,22 +239,23 @@ export default function ProductActions({
               className="btn btn-ghost w-full"
               data-testid="add-product-button"
             >
-              {isAdding ? "Adding…" : "Add to cart"}
+              {isAdding ? "Adding…" : "Buy now"}
             </button>
           ) : null}
         </div>
 
-        {!isQuoteOnly && (
+        {mobileReady && (
           <MobileActions
             product={product}
             variant={selectedVariant}
             options={options}
             updateOptions={setOptionValue}
             inStock={inStock}
-            handleAddToCart={handleAddToCart}
+            handleAddToCart={isBuyNow ? handleAddToCart : () => goToQuote(false)}
             isAdding={isAdding}
             show={!inView}
             optionsDisabled={!!disabled || isAdding}
+            quoteOnly={!isBuyNow}
           />
         )}
       </div>

@@ -21,6 +21,7 @@ type MobileActionsProps = {
   isAdding?: boolean
   show: boolean
   optionsDisabled: boolean
+  quoteOnly?: boolean
 }
 
 const MobileActions: React.FC<MobileActionsProps> = ({
@@ -33,6 +34,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   isAdding,
   show,
   optionsDisabled,
+  quoteOnly = true,
 }) => {
   const { state, open, close } = useToggleState()
 
@@ -118,16 +120,18 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               </Button>}
               <Button
                 onClick={handleAddToCart}
-                disabled={!inStock || !variant}
+                disabled={quoteOnly ? false : !inStock || !variant}
                 className="w-full"
                 isLoading={isAdding}
                 data-testid="mobile-cart-button"
               >
-                {!variant
+                {quoteOnly
+                  ? "Request a quote"
+                  : !variant && !isSimple
                   ? "Select variant"
                   : !inStock
                   ? "Out of stock"
-                  : "Add to cart"}
+                  : "Buy now"}
               </Button>
             </div>
           </div>

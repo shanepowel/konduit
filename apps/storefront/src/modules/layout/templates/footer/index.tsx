@@ -7,7 +7,7 @@ export default async function Footer() {
       className="border-t py-12"
       style={{ borderColor: "var(--color-divider)" }}
     >
-      <div className="content-container grid grid-cols-1 gap-8 small:grid-cols-[2fr_1fr_1fr_1fr]">
+      <div className="content-container grid grid-cols-1 gap-8 small:grid-cols-[2fr_1fr_1fr_1fr_1fr]">
         <div>
           <span className="nav-brand mb-2.5 block">{BRAND.name}</span>
           <p className="m-0 max-w-[32ch] text-[13.5px] opacity-75">
@@ -67,6 +67,31 @@ export default async function Footer() {
               className="text-[var(--color-text)] no-underline hover:text-[var(--color-accent)]"
             >
               Contact
+            </LocalizedClientLink>
+          </div>
+        </div>
+        <div>
+          <p className="mb-2.5 text-[11px] uppercase tracking-[0.08em] opacity-60">
+            Legal
+          </p>
+          <div className="flex flex-col gap-2 text-[13.5px]">
+            <LocalizedClientLink
+              href="/terms"
+              className="text-[var(--color-text)] no-underline hover:text-[var(--color-accent)]"
+            >
+              Terms of Sale
+            </LocalizedClientLink>
+            <LocalizedClientLink
+              href="/privacy"
+              className="text-[var(--color-text)] no-underline hover:text-[var(--color-accent)]"
+            >
+              Privacy Policy
+            </LocalizedClientLink>
+            <LocalizedClientLink
+              href="/warranty"
+              className="text-[var(--color-text)] no-underline hover:text-[var(--color-accent)]"
+            >
+              Warranty and Returns
             </LocalizedClientLink>
           </div>
         </div>

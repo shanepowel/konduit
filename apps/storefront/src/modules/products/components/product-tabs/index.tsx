@@ -1,6 +1,6 @@
 "use client"
 
-import { getSupplierOrigin } from "@lib/util/delivery"
+import { getProductSpecRows } from "@lib/util/product-specs"
 import { HttpTypes } from "@medusajs/types"
 
 type ProductTabsProps = {
@@ -8,45 +8,14 @@ type ProductTabsProps = {
 }
 
 const ProductTabs = ({ product }: ProductTabsProps) => {
-  const origin = getSupplierOrigin(
-    product.metadata as Record<string, unknown>
-  )
-  const rows: { label: string; value: string }[] = [
-    { label: "Material", value: product.material || "n/a" },
-    {
-      label: "Country of origin",
-      value: product.origin_country || origin || "n/a",
-    },
-    { label: "Type", value: product.type?.value || "n/a" },
-    {
-      label: "Weight",
-      value: product.weight ? `${product.weight} g` : "n/a",
-    },
-    {
-      label: "Dimensions",
-      value:
-        product.length && product.width && product.height
-          ? `${product.length}L x ${product.width}W x ${product.height}H`
-          : "n/a",
-    },
-  ]
+  const rows = getProductSpecRows(product)
 
-  const metadata = (product.metadata || {}) as Record<string, unknown>
-  for (const [key, raw] of Object.entries(metadata)) {
-    if (
-      key === "delivery_window_days" ||
-      key === "supplier_origin" ||
-      key === "origin" ||
-      key === "sourcing_type"
-    ) {
-      continue
-    }
-    if (typeof raw === "string" || typeof raw === "number") {
-      rows.push({
-        label: key.replace(/_/g, " "),
-        value: String(raw),
-      })
-    }
+  if (!rows.length) {
+    return (
+      <p className="text-[14px] opacity-70">
+        Specifications for this item are confirmed on the written quote.
+      </p>
+    )
   }
 
   return (

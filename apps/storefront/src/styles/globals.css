@@ -1,7 +1,6 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-@import "./organic.css";
 
 :root {
   --font-heading: var(--font-caprasimo), "Caprasimo", system-ui, sans-serif;
