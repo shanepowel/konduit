@@ -1,5 +1,6 @@
 import { BRAND } from "@lib/constants/brand"
 import { getBaseURL } from "@lib/util/env"
+import { Analytics } from "@vercel/analytics/next"
 import { Metadata } from "next"
 import { Caprasimo, Figtree } from "next/font/google"
 import "styles/globals.css"
@@ -70,6 +71,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <main className="relative min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
           {props.children}
         </main>
+        <Analytics />
       </body>
     </html>
   )
