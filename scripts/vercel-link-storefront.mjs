@@ -37,3 +37,10 @@ for (const name of entries) {
   cpSync(target, dest, { recursive: true })
   console.log(`copied ${name}`)
 }
+
+const catalogSrc = join(root, "apps", "backend", "src", "lib", "konduit-catalog.ts")
+const catalogDest = join(root, "src", "lib", "konduit-catalog.ts")
+if (existsSync(catalogSrc)) {
+  cpSync(catalogSrc, catalogDest)
+  console.log("copied backend konduit-catalog.ts")
+}

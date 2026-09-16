@@ -1,4 +1,4 @@
-import { KONDUIT_CATALOG } from "../../../../backend/src/lib/konduit-catalog"
+import { KONDUIT_CATALOG } from "@lib/konduit-catalog"
 import { HttpTypes } from "@medusajs/types"
 
 export const OFFLINE_REGION_USD_ID = "offline-usd"
