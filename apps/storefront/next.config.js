@@ -1,4 +1,3 @@
-const path = require("path")
 const checkEnvVariables = require("./check-env-variables")
 
 checkEnvVariables()
@@ -14,7 +13,6 @@ const S3_PATHNAME = process.env.MEDUSA_CLOUD_S3_PATHNAME
  */
 const nextConfig = {
   reactStrictMode: true,
-  outputFileTracingRoot: path.join(__dirname, "../.."),
   experimental: {
     externalDir: true,
   },
