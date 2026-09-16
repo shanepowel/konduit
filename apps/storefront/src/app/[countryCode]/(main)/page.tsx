@@ -3,6 +3,7 @@ import { Metadata } from "next"
 import { BRAND } from "@lib/constants/brand"
 import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
+import { HttpTypes } from "@medusajs/types"
 import Branches from "@modules/home/components/branches"
 import CatalogueRail from "@modules/home/components/catalogue-rail"
 import CtaBand from "@modules/home/components/cta-band"
@@ -33,20 +34,22 @@ export default async function Home(props: {
   const params = await props.params
   const { countryCode } = params
   const region = await getRegion(countryCode)
+  let products: HttpTypes.StoreProduct[] = []
 
-  if (!region) {
-    return null
+  if (region) {
+    try {
+      const result = await listProducts({
+        regionId: region.id,
+        queryParams: {
+          limit: 8,
+          fields: "*variants.calculated_price,+metadata,*categories",
+        },
+      })
+      products = result.response.products
+    } catch {
+      products = []
+    }
   }
-
-  const {
-    response: { products },
-  } = await listProducts({
-    regionId: region.id,
-    queryParams: {
-      limit: 8,
-      fields: "*variants.calculated_price,+metadata,*categories",
-    },
-  })
 
   return (
     <div className="content-container">
@@ -54,7 +57,7 @@ export default async function Home(props: {
       <TrustStrip />
       <WaysToBuy />
       <RouteDiagram />
-      <CatalogueRail products={products} region={region} />
+      {region ? <CatalogueRail products={products} region={region} /> : null}
       <Branches />
       <CtaBand />
     </div>

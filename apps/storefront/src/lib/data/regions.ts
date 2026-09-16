@@ -3,8 +3,21 @@
 import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
 import { getCacheOptions, getCurrencyCode } from "./cookies"
+import {
+  getOfflineRegion,
+  isOfflineRegionId,
+  isStoreBackendDown,
+  markStoreBackendDown,
+  markStoreBackendUp,
+  OFFLINE_REGIONS,
+  storeRequestSignal,
+} from "./offline-commerce"
 
 export const listRegions = async () => {
+  if (isStoreBackendDown()) {
+    return OFFLINE_REGIONS
+  }
+
   const next = {
     ...(await getCacheOptions("regions")),
   }
@@ -14,12 +27,27 @@ export const listRegions = async () => {
       method: "GET",
       next,
       cache: "force-cache",
+      signal: storeRequestSignal(),
     })
-    .then(({ regions }) => regions)
-    .catch(() => [])
+    .then(({ regions }) => {
+      if (!regions?.length) {
+        markStoreBackendDown()
+        return OFFLINE_REGIONS
+      }
+      markStoreBackendUp()
+      return regions
+    })
+    .catch(() => {
+      markStoreBackendDown()
+      return OFFLINE_REGIONS
+    })
 }
 
 export const retrieveRegion = async (id: string) => {
+  if (isOfflineRegionId(id) || isStoreBackendDown()) {
+    return getOfflineRegion(id)
+  }
+
   const next = {
     ...(await getCacheOptions(["regions", id].join("-"))),
   }
@@ -29,8 +57,13 @@ export const retrieveRegion = async (id: string) => {
       method: "GET",
       next,
       cache: "force-cache",
+      signal: storeRequestSignal(),
     })
     .then(({ region }) => region)
+    .catch(() => {
+      markStoreBackendDown()
+      return getOfflineRegion(id)
+    })
 }
 
 /**
@@ -40,12 +73,12 @@ export const retrieveRegion = async (id: string) => {
  */
 export const getRegion = async (countryCode: string) => {
   const regions = await listRegions()
+  const preferredCurrency = await getCurrencyCode()
 
   if (!regions?.length) {
-    return null
+    return getOfflineRegion(preferredCurrency)
   }
 
-  const preferredCurrency = await getCurrencyCode()
   if (preferredCurrency) {
     const byCurrency = regions.find(
       (region) => region.currency_code?.toLowerCase() === preferredCurrency
@@ -62,5 +95,5 @@ export const getRegion = async (countryCode: string) => {
     return byCountry
   }
 
-  return regions[0] ?? null
+  return regions[0] ?? getOfflineRegion(preferredCurrency)
 }

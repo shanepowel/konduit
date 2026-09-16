@@ -7,6 +7,16 @@ import { sortProducts } from "@lib/util/sort-products"
 import { HttpTypes } from "@medusajs/types"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { getAuthHeaders, getCacheOptions } from "./cookies"
+import {
+  getOfflineRegion,
+  isOfflineCategoryId,
+  isOfflineRegionId,
+  isStoreBackendDown,
+  listOfflineStoreProducts,
+  markStoreBackendDown,
+  markStoreBackendUp,
+  storeRequestSignal,
+} from "./offline-commerce"
 import { getRegion, retrieveRegion } from "./regions"
 
 type ProductListQueryParams = (HttpTypes.FindParams &
@@ -42,15 +52,34 @@ export const listProducts = async ({
 
   if (countryCode) {
     region = await getRegion(countryCode)
+  } else if (regionId && isOfflineRegionId(regionId)) {
+    region = getOfflineRegion(regionId)
   } else {
     region = await retrieveRegion(regionId!)
   }
 
   if (!region) {
-    return {
-      response: { products: [], count: 0 },
-      nextPage: null,
-    }
+    region = getOfflineRegion()
+  }
+
+  const rawCategoryId = queryParams?.category_id
+  const requestedCategoryId = Array.isArray(rawCategoryId)
+    ? rawCategoryId[0]
+    : rawCategoryId
+
+  if (
+    isOfflineRegionId(region.id) ||
+    isStoreBackendDown() ||
+    (typeof requestedCategoryId === "string" &&
+      isOfflineCategoryId(requestedCategoryId))
+  ) {
+    return listFromOfflineCatalog({
+      region,
+      queryParams,
+      limit,
+      offset,
+      pageParam,
+    })
   }
 
   const headers = {
@@ -63,35 +92,110 @@ export const listProducts = async ({
 
   const { fields: fieldsOverride, ...restQuery } = queryParams || {}
 
-  return sdk.client
-    .fetch<{ products: HttpTypes.StoreProduct[]; count: number }>(
-      `/store/products`,
-      {
-        method: "GET",
-        query: {
-          limit,
-          offset,
-          region_id: region?.id,
-          fields: mergeProductFields(fieldsOverride),
-          ...restQuery,
-        },
-        headers,
-        next,
-        cache: "force-cache",
-      }
-    )
-    .then(({ products, count }) => {
-      const nextPage = count > offset + limit ? pageParam + 1 : null
-
-      return {
-        response: {
-          products,
-          count,
-        },
-        nextPage: nextPage,
-        queryParams,
-      }
+  try {
+    const { products, count } = await sdk.client.fetch<{
+      products: HttpTypes.StoreProduct[]
+      count: number
+    }>(`/store/products`, {
+      method: "GET",
+      query: {
+        limit,
+        offset,
+        region_id: region?.id,
+        fields: mergeProductFields(fieldsOverride),
+        ...restQuery,
+      },
+      headers,
+      next,
+      cache: "force-cache",
+      signal: storeRequestSignal(),
     })
+
+    markStoreBackendUp()
+
+    if (!products.length && !queryParams?.collection_id) {
+      return listFromOfflineCatalog({
+        region,
+        queryParams,
+        limit,
+        offset,
+        pageParam,
+      })
+    }
+
+    const nextPage = count > offset + limit ? pageParam + 1 : null
+
+    return {
+      response: {
+        products,
+        count,
+      },
+      nextPage: nextPage,
+      queryParams,
+    }
+  } catch {
+    markStoreBackendDown()
+    return listFromOfflineCatalog({
+      region,
+      queryParams,
+      limit,
+      offset,
+      pageParam,
+    })
+  }
+}
+
+function listFromOfflineCatalog({
+  region,
+  queryParams,
+  limit,
+  offset,
+  pageParam,
+}: {
+  region: HttpTypes.StoreRegion
+  queryParams?: ProductListQueryParams
+  limit: number
+  offset: number
+  pageParam: number
+}): {
+  response: { products: HttpTypes.StoreProduct[]; count: number }
+  nextPage: number | null
+  queryParams?: ProductListQueryParams
+} {
+  if (queryParams?.collection_id) {
+    return {
+      response: { products: [], count: 0 },
+      nextPage: null,
+      queryParams,
+    }
+  }
+
+  const rawIds = queryParams?.id
+  const ids = rawIds
+    ? Array.isArray(rawIds)
+      ? rawIds
+      : [rawIds]
+    : undefined
+  const rawCategoryId = queryParams?.category_id
+  const categoryId = Array.isArray(rawCategoryId)
+    ? rawCategoryId[0]
+    : rawCategoryId
+
+  const { products, count } = listOfflineStoreProducts({
+    currencyCode: region.currency_code,
+    handle:
+      typeof queryParams?.handle === "string" ? queryParams.handle : undefined,
+    ids,
+    categoryId: typeof categoryId === "string" ? categoryId : undefined,
+    limit,
+    offset,
+  })
+
+  return {
+    response: { products, count },
+    nextPage: count > offset + limit ? pageParam + 1 : null,
+    queryParams,
+  }
 }
 
 /**

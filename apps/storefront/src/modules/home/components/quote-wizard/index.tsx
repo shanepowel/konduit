@@ -1,6 +1,7 @@
 "use client"
 
 import { QUOTE_COUNTRIES } from "@lib/constants/brand"
+import { COMPANY } from "@lib/constants/company"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { Check } from "lucide-react"
 import { FormEvent, useMemo, useState } from "react"
@@ -184,15 +185,20 @@ const QuoteWizard = ({
 
       const webhook = process.env.NEXT_PUBLIC_QUOTE_WEBHOOK_URL
       if (webhook) {
-        const res = await fetch(webhook, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        })
-        if (res.ok) {
-          delivered = true
-          const data = await res.json().catch(() => ({}))
-          ref = data.reference || data.ref || ref
+        try {
+          const res = await fetch(webhook, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            signal: AbortSignal.timeout(4000),
+          })
+          if (res.ok) {
+            delivered = true
+            const data = await res.json().catch(() => ({}))
+            ref = data.reference || data.ref || ref
+          }
+        } catch {
+          // CRM webhook is optional and must not fail the quote.
         }
       }
 
@@ -200,35 +206,40 @@ const QuoteWizard = ({
         process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
       const publishableKey =
         process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
-      const medusaRes = await fetch(`${backend}/store/quote-requests`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-publishable-api-key": publishableKey,
-        },
-        body: JSON.stringify({
-          email: f.email,
-          phone: f.phone || undefined,
-          company: f.company || undefined,
-          notes,
-          product_id: f.productId,
-          product_title: f.productTitle || categoriesLabel || "Business quote",
-          quantity: 1,
-          currency: f.currency,
-        }),
-      })
-      if (medusaRes.ok) {
-        delivered = true
-        const data = await medusaRes.json().catch(() => ({}))
-        if (data.draft_order_id) {
-          ref = `KQ-${String(data.draft_order_id).slice(-5).toUpperCase()}`
+      try {
+        const medusaRes = await fetch(`${backend}/store/quote-requests`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-publishable-api-key": publishableKey,
+          },
+          body: JSON.stringify({
+            email: f.email,
+            phone: f.phone || undefined,
+            company: f.company || undefined,
+            notes,
+            product_id: f.productId,
+            product_title: f.productTitle || categoriesLabel || "Business quote",
+            quantity: 1,
+            currency: f.currency,
+          }),
+          signal: AbortSignal.timeout(4000),
+        })
+        if (medusaRes.ok) {
+          delivered = true
+          const data = await medusaRes.json().catch(() => ({}))
+          if (data.draft_order_id) {
+            ref = `KQ-${String(data.draft_order_id).slice(-5).toUpperCase()}`
+          }
         }
+      } catch {
+        // Medusa Cloud outage should not fail the quote if contact mail succeeded.
       }
 
       if (!delivered) {
         throw new Error(
           helloData.message ||
-            "Could not send quote request. Check email configuration or try again."
+            `Could not send quote request. Email ${COMPANY.quotesEmail} or try again.`
         )
       }
 

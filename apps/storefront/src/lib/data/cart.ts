@@ -16,6 +16,7 @@ import {
 } from "./cookies"
 import { getRegion, listRegions } from "./regions"
 import { getLocale } from "./locale-actions"
+import { isOfflineRegionId } from "./offline-commerce"
 
 /**
  * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
@@ -58,6 +59,12 @@ export async function getOrSetCart(countryCode: string) {
 
   if (!region) {
     throw new Error(`Region not found for country code: ${countryCode}`)
+  }
+
+  if (isOfflineRegionId(region.id)) {
+    throw new Error(
+      "Checkout is temporarily unavailable. Request a quote instead."
+    )
   }
 
   let cart = await retrieveCart(undefined, "id,region_id")
@@ -439,10 +446,14 @@ export async function updateRegion(countryCode: string, currentPath: string) {
     throw new Error(`Region not found for country code: ${countryCode}`)
   }
 
-  if (cartId) {
-    await updateCart({ region_id: region.id })
-    const cartCacheTag = await getCacheTag("carts")
-    revalidateTag(cartCacheTag)
+  if (cartId && !isOfflineRegionId(region.id)) {
+    try {
+      await updateCart({ region_id: region.id })
+      const cartCacheTag = await getCacheTag("carts")
+      revalidateTag(cartCacheTag)
+    } catch {
+      // Backend outage should not block country switching.
+    }
   }
 
   const regionCacheTag = await getCacheTag("regions")
@@ -475,10 +486,14 @@ export async function updateCurrency(
   await setCurrencyCode(currencyCode)
 
   const cartId = await getCartId()
-  if (cartId) {
-    await updateCart({ region_id: region.id })
-    const cartCacheTag = await getCacheTag("carts")
-    revalidateTag(cartCacheTag)
+  if (cartId && !isOfflineRegionId(region.id)) {
+    try {
+      await updateCart({ region_id: region.id })
+      const cartCacheTag = await getCacheTag("carts")
+      revalidateTag(cartCacheTag)
+    } catch {
+      // Backend outage should not block currency switching.
+    }
   }
 
   const regionCacheTag = await getCacheTag("regions")
@@ -492,6 +507,10 @@ export async function updateCurrency(
 
 export async function listCartOptions() {
   const cartId = await getCartId()
+  if (!cartId) {
+    return { shipping_options: [] as HttpTypes.StoreCartShippingOption[] }
+  }
+
   const headers = {
     ...(await getAuthHeaders()),
   }
@@ -499,12 +518,16 @@ export async function listCartOptions() {
     ...(await getCacheOptions("shippingOptions")),
   }
 
-  return await sdk.client.fetch<{
-    shipping_options: HttpTypes.StoreCartShippingOption[]
-  }>("/store/shipping-options", {
-    query: { cart_id: cartId },
-    next,
-    headers,
-    cache: "force-cache",
-  })
+  return await sdk.client
+    .fetch<{
+      shipping_options: HttpTypes.StoreCartShippingOption[]
+    }>("/store/shipping-options", {
+      query: { cart_id: cartId },
+      next,
+      headers,
+      cache: "force-cache",
+    })
+    .catch(() => ({
+      shipping_options: [] as HttpTypes.StoreCartShippingOption[],
+    }))
 }
