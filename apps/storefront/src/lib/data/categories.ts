@@ -3,6 +3,7 @@ import { HttpTypes } from "@medusajs/types"
 import { getCacheOptions } from "./cookies"
 import {
   OFFLINE_CATEGORIES,
+  isOfflineCommerceMode,
   isStoreBackendDown,
   markStoreBackendDown,
   markStoreBackendUp,
@@ -20,7 +21,7 @@ export const listCategories = async (query?: Record<string, unknown>) => {
 
   const limit = query?.limit || 100
 
-  if (isStoreBackendDown()) {
+  if (isOfflineCommerceMode() || isStoreBackendDown()) {
     return OFFLINE_CATEGORIES
   }
 
@@ -56,7 +57,7 @@ export const getCategoryByHandle = async (categoryHandle: string[]) => {
   const handle = `${categoryHandle.join("/")}`
   const fallback = offlineCategoryByHandle(handle)
 
-  if (isStoreBackendDown()) {
+  if (isOfflineCommerceMode() || isStoreBackendDown()) {
     return fallback
   }
 

@@ -52,14 +52,16 @@ export default async function Home(props: {
   }
 
   return (
-    <div className="content-container">
+    <>
       <Hero />
-      <TrustStrip />
-      <WaysToBuy />
-      <RouteDiagram />
-      {region ? <CatalogueRail products={products} region={region} /> : null}
-      <Branches />
-      <CtaBand />
-    </div>
+      <div className="content-container">
+        <TrustStrip />
+        <WaysToBuy />
+        <RouteDiagram />
+        {region ? <CatalogueRail products={products} region={region} /> : null}
+        <Branches />
+        <CtaBand />
+      </div>
+    </>
   )
 }

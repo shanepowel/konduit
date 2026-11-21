@@ -10,6 +10,7 @@ import { getAuthHeaders, getCacheOptions } from "./cookies"
 import {
   getOfflineRegion,
   isOfflineCategoryId,
+  isOfflineCommerceMode,
   isOfflineRegionId,
   isStoreBackendDown,
   listOfflineStoreProducts,
@@ -68,6 +69,7 @@ export const listProducts = async ({
     : rawCategoryId
 
   if (
+    isOfflineCommerceMode() ||
     isOfflineRegionId(region.id) ||
     isStoreBackendDown() ||
     (typeof requestedCategoryId === "string" &&

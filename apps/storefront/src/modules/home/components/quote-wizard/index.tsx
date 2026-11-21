@@ -202,38 +202,48 @@ const QuoteWizard = ({
         }
       }
 
-      const backend =
-        process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
-      const publishableKey =
-        process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
-      try {
-        const medusaRes = await fetch(`${backend}/store/quote-requests`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-publishable-api-key": publishableKey,
-          },
-          body: JSON.stringify({
-            email: f.email,
-            phone: f.phone || undefined,
-            company: f.company || undefined,
-            notes,
-            product_id: f.productId,
-            product_title: f.productTitle || categoriesLabel || "Business quote",
-            quantity: 1,
-            currency: f.currency,
-          }),
-          signal: AbortSignal.timeout(4000),
-        })
-        if (medusaRes.ok) {
-          delivered = true
-          const data = await medusaRes.json().catch(() => ({}))
-          if (data.draft_order_id) {
-            ref = `KQ-${String(data.draft_order_id).slice(-5).toUpperCase()}`
+      const commerceMode = (
+        process.env.NEXT_PUBLIC_COMMERCE_MODE || ""
+      ).toLowerCase()
+      const offlineCommerce =
+        commerceMode === "offline" ||
+        commerceMode === "local" ||
+        (!commerceMode && !process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL)
+
+      if (!offlineCommerce && process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
+        const backend = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+        const publishableKey =
+          process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || ""
+        try {
+          const medusaRes = await fetch(`${backend}/store/quote-requests`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-publishable-api-key": publishableKey,
+            },
+            body: JSON.stringify({
+              email: f.email,
+              phone: f.phone || undefined,
+              company: f.company || undefined,
+              notes,
+              product_id: f.productId,
+              product_title:
+                f.productTitle || categoriesLabel || "Business quote",
+              quantity: 1,
+              currency: f.currency,
+            }),
+            signal: AbortSignal.timeout(4000),
+          })
+          if (medusaRes.ok) {
+            delivered = true
+            const data = await medusaRes.json().catch(() => ({}))
+            if (data.draft_order_id) {
+              ref = `KQ-${String(data.draft_order_id).slice(-5).toUpperCase()}`
+            }
           }
+        } catch {
+          // Medusa Cloud outage should not fail the quote if contact mail succeeded.
         }
-      } catch {
-        // Medusa Cloud outage should not fail the quote if contact mail succeeded.
       }
 
       if (!delivered) {

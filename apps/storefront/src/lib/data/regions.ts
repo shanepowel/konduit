@@ -5,6 +5,7 @@ import { HttpTypes } from "@medusajs/types"
 import { getCacheOptions, getCurrencyCode } from "./cookies"
 import {
   getOfflineRegion,
+  isOfflineCommerceMode,
   isOfflineRegionId,
   isStoreBackendDown,
   markStoreBackendDown,
@@ -14,7 +15,7 @@ import {
 } from "./offline-commerce"
 
 export const listRegions = async () => {
-  if (isStoreBackendDown()) {
+  if (isStoreBackendDown() || isOfflineCommerceMode()) {
     return OFFLINE_REGIONS
   }
 

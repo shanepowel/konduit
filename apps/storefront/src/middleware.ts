@@ -6,6 +6,11 @@ const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "zw"
 const REGION_FETCH_TIMEOUT_MS = 4000
 const FAILED_FETCH_RETRY_MS = 30 * 1000
+const COMMERCE_MODE = (process.env.NEXT_PUBLIC_COMMERCE_MODE || "").toLowerCase()
+const OFFLINE_MODE =
+  COMMERCE_MODE === "offline" ||
+  COMMERCE_MODE === "local" ||
+  (!COMMERCE_MODE && !BACKEND_URL)
 
 const FALLBACK_COUNTRY_CODES = ["zw", "zm", "bw", "mz", "za"]
 
@@ -40,7 +45,7 @@ async function getRegionMap(cacheId: string) {
     return regionMap
   }
 
-  if (!BACKEND_URL) {
+  if (OFFLINE_MODE || !BACKEND_URL) {
     return seedFallbackRegionMap()
   }
 

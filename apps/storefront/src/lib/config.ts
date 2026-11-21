@@ -1,7 +1,8 @@
+import { isOfflineCommerceMode } from "@lib/data/offline-commerce"
 import { getLocaleHeader } from "@lib/util/get-locale-header"
 import Medusa, { FetchArgs, FetchInput } from "@medusajs/js-sdk"
 
-// Defaults to standard port for Medusa server
+// Defaults to standard port for Medusa server. Unused in offline commerce mode.
 let MEDUSA_BACKEND_URL = "http://localhost:9000"
 
 if (process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL) {
@@ -20,6 +21,10 @@ sdk.client.fetch = async <T>(
   input: FetchInput,
   init?: FetchArgs
 ): Promise<T> => {
+  if (isOfflineCommerceMode()) {
+    throw new Error("Offline commerce mode: Medusa backend disabled")
+  }
+
   const headers = init?.headers ?? {}
   let localeHeader: Record<string, string | null> | undefined
   try {

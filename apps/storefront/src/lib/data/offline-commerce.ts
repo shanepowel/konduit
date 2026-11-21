@@ -1,4 +1,5 @@
 import { KONDUIT_CATALOG } from "@lib/konduit-catalog"
+import { catalogImageForHandle, catalogImagesForHandle } from "@lib/product-images"
 import { HttpTypes } from "@medusajs/types"
 
 export const OFFLINE_REGION_USD_ID = "offline-usd"
@@ -49,12 +50,28 @@ const BACKEND_DOWN_RETRY_MS = 30 * 1000
 
 let backendDownUntil = 0
 
+/**
+ * Offline-first commerce: no Medusa Cloud calls.
+ * Set NEXT_PUBLIC_COMMERCE_MODE=offline (default for production when Cloud is unused).
+ */
+export function isOfflineCommerceMode() {
+  const mode = (process.env.NEXT_PUBLIC_COMMERCE_MODE || "").toLowerCase()
+  if (mode === "offline" || mode === "local") {
+    return true
+  }
+  if (mode === "live") {
+    return false
+  }
+  // Auto-offline when no backend URL is configured.
+  return !process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+}
+
 export function storeRequestSignal() {
   return AbortSignal.timeout(STORE_REQUEST_TIMEOUT_MS)
 }
 
 export function isStoreBackendDown() {
-  return Date.now() < backendDownUntil
+  return isOfflineCommerceMode() || Date.now() < backendDownUntil
 }
 
 export function markStoreBackendDown() {
@@ -191,14 +208,17 @@ function toStoreProduct(
     handle: categoryHandle(name),
   })) as HttpTypes.StoreProductCategory[]
 
+  const thumbnail = catalogImageForHandle(item.handle)
+  const images = catalogImagesForHandle(item.handle)
+
   return {
     id: `offlineprod_${item.handle}`,
     title: item.title,
     handle: item.handle,
     description: item.description,
     status: "published",
-    thumbnail: null,
-    images: [],
+    thumbnail,
+    images,
     variants: [
       {
         id: `offlinevar_${item.handle}`,

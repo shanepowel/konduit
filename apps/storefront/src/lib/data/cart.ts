@@ -16,7 +16,7 @@ import {
 } from "./cookies"
 import { getRegion, listRegions } from "./regions"
 import { getLocale } from "./locale-actions"
-import { isOfflineRegionId } from "./offline-commerce"
+import { isOfflineCommerceMode, isOfflineRegionId } from "./offline-commerce"
 
 /**
  * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
@@ -24,6 +24,10 @@ import { isOfflineRegionId } from "./offline-commerce"
  * @returns The cart object if found, or null if not found.
  */
 export async function retrieveCart(cartId?: string, fields?: string) {
+  if (isOfflineCommerceMode()) {
+    return null
+  }
+
   const id = cartId || (await getCartId())
   fields ??=
     "*items, *region, *items.product, *items.variant, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name"
