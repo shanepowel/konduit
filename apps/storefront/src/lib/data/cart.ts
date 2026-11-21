@@ -12,9 +12,11 @@ import {
   getCartId,
   removeCartId,
   setCartId,
+  setCurrencyCode,
 } from "./cookies"
-import { getRegion } from "./regions"
+import { getRegion, listRegions } from "./regions"
 import { getLocale } from "./locale-actions"
+import { isOfflineCommerceMode, isOfflineRegionId } from "./offline-commerce"
 
 /**
  * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
@@ -22,6 +24,10 @@ import { getLocale } from "./locale-actions"
  * @returns The cart object if found, or null if not found.
  */
 export async function retrieveCart(cartId?: string, fields?: string) {
+  if (isOfflineCommerceMode()) {
+    return null
+  }
+
   const id = cartId || (await getCartId())
   fields ??=
     "*items, *region, *items.product, *items.variant, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name"
@@ -57,6 +63,12 @@ export async function getOrSetCart(countryCode: string) {
 
   if (!region) {
     throw new Error(`Region not found for country code: ${countryCode}`)
+  }
+
+  if (isOfflineRegionId(region.id)) {
+    throw new Error(
+      "Checkout is temporarily unavailable. Request a quote instead."
+    )
   }
 
   let cart = await retrieveCart(undefined, "id,region_id")
@@ -438,10 +450,54 @@ export async function updateRegion(countryCode: string, currentPath: string) {
     throw new Error(`Region not found for country code: ${countryCode}`)
   }
 
-  if (cartId) {
-    await updateCart({ region_id: region.id })
-    const cartCacheTag = await getCacheTag("carts")
-    revalidateTag(cartCacheTag)
+  if (cartId && !isOfflineRegionId(region.id)) {
+    try {
+      await updateCart({ region_id: region.id })
+      const cartCacheTag = await getCacheTag("carts")
+      revalidateTag(cartCacheTag)
+    } catch {
+      // Backend outage should not block country switching.
+    }
+  }
+
+  const regionCacheTag = await getCacheTag("regions")
+  revalidateTag(regionCacheTag)
+
+  const productsCacheTag = await getCacheTag("products")
+  revalidateTag(productsCacheTag)
+
+  redirect(`/${countryCode}${currentPath}`)
+}
+
+/**
+ * Switch pricing currency (USD / ZWG) without changing the country path.
+ * ZWG region has no country mapping, so currency is stored in a cookie.
+ */
+export async function updateCurrency(
+  currencyCode: string,
+  countryCode: string,
+  currentPath: string
+) {
+  const regions = await listRegions()
+  const region = regions.find(
+    (r) => r.currency_code?.toLowerCase() === currencyCode.toLowerCase()
+  )
+
+  if (!region) {
+    throw new Error(`Region not found for currency: ${currencyCode}`)
+  }
+
+  await setCurrencyCode(currencyCode)
+
+  const cartId = await getCartId()
+  if (cartId && !isOfflineRegionId(region.id)) {
+    try {
+      await updateCart({ region_id: region.id })
+      const cartCacheTag = await getCacheTag("carts")
+      revalidateTag(cartCacheTag)
+    } catch {
+      // Backend outage should not block currency switching.
+    }
   }
 
   const regionCacheTag = await getCacheTag("regions")
@@ -455,6 +511,10 @@ export async function updateRegion(countryCode: string, currentPath: string) {
 
 export async function listCartOptions() {
   const cartId = await getCartId()
+  if (!cartId) {
+    return { shipping_options: [] as HttpTypes.StoreCartShippingOption[] }
+  }
+
   const headers = {
     ...(await getAuthHeaders()),
   }
@@ -462,12 +522,16 @@ export async function listCartOptions() {
     ...(await getCacheOptions("shippingOptions")),
   }
 
-  return await sdk.client.fetch<{
-    shipping_options: HttpTypes.StoreCartShippingOption[]
-  }>("/store/shipping-options", {
-    query: { cart_id: cartId },
-    next,
-    headers,
-    cache: "force-cache",
-  })
+  return await sdk.client
+    .fetch<{
+      shipping_options: HttpTypes.StoreCartShippingOption[]
+    }>("/store/shipping-options", {
+      query: { cart_id: cartId },
+      next,
+      headers,
+      cache: "force-cache",
+    })
+    .catch(() => ({
+      shipping_options: [] as HttpTypes.StoreCartShippingOption[],
+    }))
 }

@@ -12,9 +12,7 @@ const Help = () => {
             <LocalizedClientLink href="/contact">Contact</LocalizedClientLink>
           </li>
           <li>
-            <LocalizedClientLink href="/contact">
-              Returns & Exchanges
-            </LocalizedClientLink>
+            <LocalizedClientLink href="/quote">Request a quote</LocalizedClientLink>
           </li>
         </ul>
       </div>

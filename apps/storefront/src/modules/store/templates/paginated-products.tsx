@@ -55,7 +55,12 @@ export default async function PaginatedProducts({
   const region = await getRegion(countryCode)
 
   if (!region) {
-    return null
+    return (
+      <p className="text-[14px] opacity-70">
+        Catalogue is temporarily unavailable. Request a quote and we will confirm
+        pricing by email.
+      </p>
+    )
   }
 
   const {
@@ -69,6 +74,15 @@ export default async function PaginatedProducts({
   })
 
   const totalPages = Math.ceil(count / PRODUCT_LIMIT)
+
+  if (!products.length) {
+    return (
+      <p className="text-[14px] opacity-70">
+        No catalogue items in this view yet. Request a quote for a custom
+        specification.
+      </p>
+    )
+  }
 
   return (
     <>

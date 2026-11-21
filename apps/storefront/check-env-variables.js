@@ -1,15 +1,31 @@
 const c = require("ansi-colors")
 
+function isOfflineMode() {
+  const mode = String(process.env.NEXT_PUBLIC_COMMERCE_MODE || "").toLowerCase()
+  if (mode === "offline" || mode === "local") {
+    return true
+  }
+  if (mode === "live") {
+    return false
+  }
+  return !process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+}
+
 const requiredEnvs = [
   {
     key: "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
     description:
       "Learn how to create a publishable key: https://docs.medusajs.com/v2/resources/storefront-development/publishable-api-keys",
+    optionalInOffline: true,
   },
 ]
 
 function checkEnvVariables() {
+  const offline = isOfflineMode()
   const missingEnvs = requiredEnvs.filter(function (env) {
+    if (offline && env.optionalInOffline) {
+      return false
+    }
     return !process.env[env.key]
   })
 

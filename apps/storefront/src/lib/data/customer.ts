@@ -18,6 +18,7 @@ import {
   setAuthToken,
   setPendingCustomer,
 } from "./cookies"
+import { isOfflineCommerceMode } from "./offline-commerce"
 
 export type CustomerAuthState =
   | { state: "error"; error: string }
@@ -42,6 +43,10 @@ async function requestVerificationEmail(email: string, token: string) {
 
 export const retrieveCustomer =
   async (): Promise<HttpTypes.StoreCustomer | null> => {
+    if (isOfflineCommerceMode()) {
+      return null
+    }
+
     const authHeaders = await getAuthHeaders()
 
     if (!authHeaders) return null

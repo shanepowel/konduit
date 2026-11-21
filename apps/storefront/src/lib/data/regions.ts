@@ -2,9 +2,23 @@
 
 import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
-import { getCacheOptions } from "./cookies"
+import { getCacheOptions, getCurrencyCode } from "./cookies"
+import {
+  getOfflineRegion,
+  isOfflineCommerceMode,
+  isOfflineRegionId,
+  isStoreBackendDown,
+  markStoreBackendDown,
+  markStoreBackendUp,
+  OFFLINE_REGIONS,
+  storeRequestSignal,
+} from "./offline-commerce"
 
 export const listRegions = async () => {
+  if (isStoreBackendDown() || isOfflineCommerceMode()) {
+    return OFFLINE_REGIONS
+  }
+
   const next = {
     ...(await getCacheOptions("regions")),
   }
@@ -14,12 +28,27 @@ export const listRegions = async () => {
       method: "GET",
       next,
       cache: "force-cache",
+      signal: storeRequestSignal(),
     })
-    .then(({ regions }) => regions)
-    .catch(() => [])
+    .then(({ regions }) => {
+      if (!regions?.length) {
+        markStoreBackendDown()
+        return OFFLINE_REGIONS
+      }
+      markStoreBackendUp()
+      return regions
+    })
+    .catch(() => {
+      markStoreBackendDown()
+      return OFFLINE_REGIONS
+    })
 }
 
 export const retrieveRegion = async (id: string) => {
+  if (isOfflineRegionId(id) || isStoreBackendDown()) {
+    return getOfflineRegion(id)
+  }
+
   const next = {
     ...(await getCacheOptions(["regions", id].join("-"))),
   }
@@ -29,32 +58,43 @@ export const retrieveRegion = async (id: string) => {
       method: "GET",
       next,
       cache: "force-cache",
+      signal: storeRequestSignal(),
     })
     .then(({ region }) => region)
+    .catch(() => {
+      markStoreBackendDown()
+      return getOfflineRegion(id)
+    })
 }
 
-const regionMap = new Map<string, HttpTypes.StoreRegion>()
-
+/**
+ * Resolve the active commerce region for a country path segment.
+ * Prefer the shopper's currency cookie (USD/ZWG) when that region exists,
+ * since ZWG is seeded without a country mapping in Medusa.
+ */
 export const getRegion = async (countryCode: string) => {
-  if (regionMap.has(countryCode)) {
-    return regionMap.get(countryCode)
-  }
-
   const regions = await listRegions()
+  const preferredCurrency = await getCurrencyCode()
 
-  if (!regions) {
-    return null
+  if (!regions?.length) {
+    return getOfflineRegion(preferredCurrency)
   }
 
-  regions.forEach((region) => {
-    region.countries?.forEach((c) => {
-      regionMap.set(c?.iso_2 ?? "", region)
-    })
-  })
+  if (preferredCurrency) {
+    const byCurrency = regions.find(
+      (region) => region.currency_code?.toLowerCase() === preferredCurrency
+    )
+    if (byCurrency) {
+      return byCurrency
+    }
+  }
 
-  const region = countryCode
-    ? regionMap.get(countryCode)
-    : regionMap.get("us")
+  const byCountry = regions.find((region) =>
+    region.countries?.some((c) => c.iso_2 === countryCode)
+  )
+  if (byCountry) {
+    return byCountry
+  }
 
-  return region
+  return regions[0] ?? getOfflineRegion(preferredCurrency)
 }

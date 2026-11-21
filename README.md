@@ -71,7 +71,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:8000
 
 ## Deploy
 
-- Storefront: Vercel — root directory `apps/storefront`
+- Storefront: Vercel — root directory `apps/storefront` (see [deploy/VERCEL.md](deploy/VERCEL.md); required or builds fail with “No Next.js version detected”)
 - Backend + Redis + Meilisearch: Railway/Render — see `deploy/`
 - Postgres: Neon
 
@@ -79,5 +79,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:8000
 
 Infrastructure · Telecoms (Infrastructure services / Devices) · Imports
 
-Product metadata: `delivery_window_days`, `sourcing_type` (`in_stock` | `pre_order` | `quote_only`).
+Product metadata: `delivery_window_days`, `sourcing_type` (`in_stock` | `pre_order` | `quote_only`), `supplier_origin` (`UK` | `USA` | `China` | `Zimbabwe`), `manufacturer`.
 Order metadata: `logistics_status` (`sourced` | `in_transit` | `customs` | `delivered`) → WhatsApp Cloud API on change when credentials are set.
+
+Quote requests: set storefront `NEXT_PUBLIC_QUOTE_WEBHOOK_URL` to the n8n → Twenty CRM webhook. When unset, the wizard posts to Medusa `/store/quote-requests`. Contact and quote forms also email `hello@konduit.co.zw` via Resend (`RESEND_API_KEY` + verified `RESEND_FROM_EMAIL`).

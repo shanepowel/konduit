@@ -1,40 +1,66 @@
 import { Metadata } from "next"
 
-import FeaturedProducts from "@modules/home/components/featured-products"
-import Hero from "@modules/home/components/hero"
-import { listCollections } from "@lib/data/collections"
+import { BRAND } from "@lib/constants/brand"
+import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
+import { HttpTypes } from "@medusajs/types"
+import Branches from "@modules/home/components/branches"
+import CatalogueRail from "@modules/home/components/catalogue-rail"
+import CtaBand from "@modules/home/components/cta-band"
+import Hero from "@modules/home/components/hero"
+import RouteDiagram from "@modules/home/components/route-diagram"
+import TrustStrip from "@modules/home/components/trust-strip"
+import WaysToBuy from "@modules/home/components/ways-to-buy"
 
 export const metadata: Metadata = {
-  title: "Medusa Next.js Starter Template",
-  description:
-    "A performant frontend ecommerce starter template with Next.js 15 and Medusa.",
+  // Absolute so the root template does not append "| Konduit" twice.
+  title: {
+    absolute: "Konduit: Secure the technology your business runs on",
+  },
+  description: BRAND.seoDescription,
+  openGraph: {
+    title: "Konduit: Secure the technology your business runs on",
+    description: BRAND.seoDescription,
+  },
+  twitter: {
+    title: "Konduit: Secure the technology your business runs on",
+    description: BRAND.seoDescription,
+  },
 }
 
 export default async function Home(props: {
   params: Promise<{ countryCode: string }>
 }) {
   const params = await props.params
-
   const { countryCode } = params
-
   const region = await getRegion(countryCode)
+  let products: HttpTypes.StoreProduct[] = []
 
-  const { collections } = await listCollections({
-    fields: "id, handle, title",
-  })
-
-  if (!collections || !region) {
-    return null
+  if (region) {
+    try {
+      const result = await listProducts({
+        regionId: region.id,
+        queryParams: {
+          limit: 8,
+          fields: "*variants.calculated_price,+metadata,*categories",
+        },
+      })
+      products = result.response.products
+    } catch {
+      products = []
+    }
   }
 
   return (
     <>
       <Hero />
-      <div className="py-12">
-        <ul className="flex flex-col gap-x-6">
-          <FeaturedProducts collections={collections} region={region} />
-        </ul>
+      <div className="content-container">
+        <TrustStrip />
+        <WaysToBuy />
+        <RouteDiagram />
+        {region ? <CatalogueRail products={products} region={region} /> : null}
+        <Branches />
+        <CtaBand />
       </div>
     </>
   )

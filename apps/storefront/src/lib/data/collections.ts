@@ -3,8 +3,13 @@
 import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
 import { getCacheOptions } from "./cookies"
+import { isOfflineCommerceMode } from "./offline-commerce"
 
 export const retrieveCollection = async (id: string) => {
+  if (isOfflineCommerceMode()) {
+    return null
+  }
+
   const next = {
     ...(await getCacheOptions("collections")),
   }
@@ -18,11 +23,16 @@ export const retrieveCollection = async (id: string) => {
       }
     )
     .then(({ collection }) => collection)
+    .catch(() => null)
 }
 
 export const listCollections = async (
   queryParams: Record<string, string> = {}
 ): Promise<{ collections: HttpTypes.StoreCollection[]; count: number }> => {
+  if (isOfflineCommerceMode()) {
+    return { collections: [], count: 0 }
+  }
+
   const next = {
     ...(await getCacheOptions("collections")),
   }
@@ -46,6 +56,10 @@ export const listCollections = async (
 export const getCollectionByHandle = async (
   handle: string
 ): Promise<HttpTypes.StoreCollection | null> => {
+  if (isOfflineCommerceMode()) {
+    return null
+  }
+
   const next = {
     ...(await getCacheOptions("collections")),
   }
@@ -57,4 +71,5 @@ export const getCollectionByHandle = async (
       cache: "force-cache",
     })
     .then(({ collections }) => collections[0] || null)
+    .catch(() => null)
 }

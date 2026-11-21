@@ -10,6 +10,7 @@ type QuoteBody = {
   product_id?: string
   product_title?: string
   quantity?: number
+  currency?: string
 }
 
 /**
@@ -31,7 +32,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const { result } = await createOrderWorkflow(req.scope).run({
       input: {
         email: body.email,
-        currency_code: "usd",
+        currency_code: body.currency === "zwg" ? "zwg" : "usd",
         status: "pending",
         metadata: {
           quote_request: true,

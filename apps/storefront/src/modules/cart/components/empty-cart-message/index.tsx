@@ -1,23 +1,22 @@
-import { Heading, Text } from "@modules/common/components/ui"
-
-import InteractiveLink from "@modules/common/components/interactive-link"
+import { EMPTY_STATES } from "@lib/constants/brand"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 const EmptyCartMessage = () => {
   return (
-    <div className="py-48 px-2 flex flex-col justify-center items-start" data-testid="empty-cart-message">
-      <Heading
-        level="h1"
-        className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
+    <div
+      className="flex flex-col items-start justify-center px-2 py-48"
+      data-testid="empty-cart-message"
+    >
+      <h1 className="text-3xl tracking-tight">Cart</h1>
+      <p className="mb-6 mt-4 max-w-[32rem] text-base opacity-80">
+        {EMPTY_STATES.cart}
+      </p>
+      <LocalizedClientLink
+        href="/categories/infrastructure"
+        className="btn btn-primary"
       >
-        Cart
-      </Heading>
-      <Text className="text-base-regular mt-4 mb-6 max-w-[32rem]">
-        You don&apos;t have anything in your cart. Let&apos;s change that, use
-        the link below to start browsing our products.
-      </Text>
-      <div>
-        <InteractiveLink href="/store">Explore products</InteractiveLink>
-      </div>
+        Browse the catalogue
+      </LocalizedClientLink>
     </div>
   )
 }
