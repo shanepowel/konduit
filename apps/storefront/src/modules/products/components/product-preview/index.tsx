@@ -54,13 +54,13 @@ export default async function ProductPreview({
       className="group text-[var(--color-text)] no-underline"
     >
       <article data-testid="product-wrapper" className="card elev-sm h-full gap-2 p-4">
-        <div className="washed overflow-hidden rounded-2xl">
+        <div className="overflow-hidden rounded-2xl">
           <Thumbnail
             thumbnail={pricedProduct.thumbnail}
             images={pricedProduct.images}
             size="full"
             isFeatured={isFeatured}
-            className="!rounded-none aspect-[4/3]"
+            className="!rounded-none aspect-[4/3] !bg-[var(--color-surface)] !p-0 !shadow-none"
           />
         </div>
         {tag ? <span className="tag tag-accent">{tag}</span> : null}

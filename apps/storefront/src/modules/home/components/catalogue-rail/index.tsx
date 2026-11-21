@@ -69,12 +69,12 @@ const CatalogueRail = ({ products }: CatalogueRailProps) => {
               className="text-[var(--color-text)] no-underline"
             >
               <article className="card elev-sm h-full gap-2 p-4">
-                <div className="washed overflow-hidden rounded-2xl">
+                <div className="overflow-hidden rounded-2xl">
                   <Thumbnail
                     thumbnail={product.thumbnail}
                     images={product.images}
                     size="full"
-                    className="!rounded-none aspect-[4/3]"
+                    className="!rounded-none aspect-[4/3] !bg-[var(--color-surface)] !p-0 !shadow-none"
                   />
                 </div>
                 <span className={`tag ${tagClass}`}>{tag.label}</span>
